@@ -3,403 +3,243 @@
 import { useSession } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Users, DollarSign, CheckCircle, ArrowRight, Sparkles } from "lucide-react"
 import Link from "next/link"
-import { ThemeSelector } from "@/components/theme-selector"
+import { Button } from "@/components/ui/button"
+import { PublicNavigation } from "@/components/public-navigation"
 import { Footer } from "@/components/footer"
+import { PerforatedEdge } from "@/components/brand/perforated-edge"
+
+const features = [
+  {
+    k: "01",
+    h: "Send like a designer",
+    b: "A type system that makes your invoice look like you cared. Not a TurboTax form.",
+  },
+  {
+    k: "02",
+    h: "Know when they look",
+    b: "We tell you the moment a client opens the invoice. Polite passive-aggression, automated.",
+  },
+  {
+    k: "03",
+    h: "Track without spreadsheets",
+    b: "Outstanding, paid, overdue. One screen. Tabular numbers, real totals.",
+  },
+  {
+    k: "04",
+    h: "Get paid online",
+    b: "One link, your client pays from their inbox. Stripe, ACH, or “I’ll mail a check.”",
+  },
+]
+
+const tiers = [
+  {
+    name: "Solo",
+    price: "$0",
+    per: "forever",
+    desc: "For your first five invoices.",
+    feats: ["Up to 5 invoices/month", "PDF export", "Public share links"],
+    cta: "Start free",
+    highlight: false,
+  },
+  {
+    name: "Pro",
+    price: "$12",
+    per: "per month",
+    desc: "For working freelancers.",
+    feats: [
+      "Unlimited invoices",
+      "Open tracking",
+      "Stripe + ACH payments",
+      "Recurring invoices",
+      "Priority support",
+    ],
+    cta: "Start 14-day trial",
+    highlight: true,
+  },
+  {
+    name: "Studio",
+    price: "$32",
+    per: "per month",
+    desc: "For small teams sharing books.",
+    feats: ["Everything in Pro", "Up to 5 seats", "Custom invoice branding", "API access"],
+    cta: "Start trial",
+    highlight: false,
+  },
+]
 
 export default function Home() {
   const { data: session, isPending } = useSession()
   const router = useRouter()
 
   useEffect(() => {
-    if (!isPending && session) {
-      router.push("/dashboard")
-    }
+    if (!isPending && session) router.push("/dashboard")
   }, [session, isPending, router])
 
   if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
       </div>
     )
   }
 
-  if (session) {
-    return null // Will redirect to dashboard
-  }
+  if (session) return null
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation Header */}
-      <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-[var(--blue)]/10 to-[var(--mauve)]/10 group-hover:from-[var(--blue)]/20 group-hover:to-[var(--mauve)]/20 transition-all duration-300">
-                <FileText className="h-6 w-6 text-[var(--blue)]" />
+      <PublicNavigation />
+
+      {/* Hero */}
+      <section className="relative px-12 pt-20 pb-12">
+        <div className="mx-auto max-w-[1100px]">
+          <div className="inline-flex items-center gap-2 text-[12px] text-[var(--fg-muted)] px-3 py-1.5 border border-[var(--border)] rounded-full mb-7">
+            <span
+              aria-hidden
+              className="w-1.5 h-1.5 rounded-full bg-[var(--citrus)] border border-[var(--ink-900)] dark:border-transparent"
+            />
+            For freelancers who&rsquo;d rather be designing
+          </div>
+          <h1 className="font-[var(--font-display)] leading-[1.0] tracking-[-0.02em] m-0 mb-7 max-w-[1000px]" style={{ fontSize: "clamp(56px, 9vw, 124px)" }}>
+            Get{" "}
+            <em className="not-italic">
+              <span className="italic">paid</span>
+              <span
+                aria-hidden
+                className="inline-block bg-[var(--citrus)] border border-[var(--ink-900)] dark:border-transparent rounded-full"
+                style={{ width: "0.14em", height: "0.14em", verticalAlign: "0.18em", marginLeft: "0.04em" }}
+              />
+            </em>{" "}
+            like
+            <br />
+            you mean it.
+          </h1>
+          <p className="text-[20px] leading-[1.55] text-[var(--fg-muted)] max-w-[640px] mb-8">
+            Invoicing that doesn&rsquo;t feel like homework. Send a clean invoice, see when your client opens it, and quit chasing payments through three different apps.
+          </p>
+          <div className="flex flex-wrap gap-3 items-center mb-7">
+            <Button asChild size="lg">
+              <Link href="/register">Start free — no card</Link>
+            </Button>
+            <Button asChild size="lg" variant="ghost">
+              <Link href="#features">See a sample invoice →</Link>
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-4 text-[12px] text-[var(--fg-muted)]">
+            <span className="font-mono tabular-nums">Free for 5 invoices/mo</span>
+            <span className="text-[var(--fg-subtle)]">·</span>
+            <span className="font-mono tabular-nums">$12/mo Pro</span>
+            <span className="text-[var(--fg-subtle)]">·</span>
+            <span className="font-mono tabular-nums">No annual contracts</span>
+          </div>
+        </div>
+        <PerforatedEdge className="absolute left-0 right-0 bottom-[-1px]" />
+      </section>
+
+      {/* Proof */}
+      <section className="px-12 py-9 border-t border-b border-[var(--border)]">
+        <div className="mx-auto max-w-[1100px] flex flex-wrap items-center justify-between gap-9">
+          <div className="font-[var(--font-display)] italic text-[22px] text-[var(--fg-muted)]">
+            &ldquo;Stopped using three apps for one job. Final form.&rdquo;
+          </div>
+          <div className="flex gap-8">
+            {[
+              { num: "$2.4M", lab: "Sent through Voicer" },
+              { num: "3.1d", lab: "Avg time to paid" },
+              { num: "11k", lab: "Freelancers, no agencies" },
+            ].map((s) => (
+              <div key={s.lab}>
+                <div className="font-[var(--font-display)] text-[32px] leading-none">{s.num}</div>
+                <div className="t-overline mt-1">{s.lab}</div>
               </div>
-              <div>
-                <span className="text-2xl font-bold text-foreground group-hover:text-[var(--blue)] transition-colors duration-300">
-                  Vibe Voicer
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="px-12 py-20 bg-[var(--bg-sunken)]">
+        <div className="mx-auto max-w-[1100px] mb-9">
+          <div className="t-overline">What it does</div>
+          <h2 className="font-[var(--font-display)] text-[56px] leading-[1.05] mt-2 max-w-[720px]">
+            The boring parts, <em className="italic">handled</em>.
+          </h2>
+        </div>
+        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-2 gap-4">
+          {features.map((it) => (
+            <div
+              key={it.k}
+              className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-[16px] p-7 hover:border-[var(--border-strong)] transition-colors"
+            >
+              <div className="font-mono text-[12px] text-[var(--fg-subtle)] mb-4">{it.k}</div>
+              <div className="font-[var(--font-display)] text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
+              <div className="text-[14px] text-[var(--fg-muted)] leading-[1.55] max-w-[420px]">{it.b}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="px-12 py-20">
+        <div className="mx-auto max-w-[1100px] mb-10">
+          <div className="t-overline">Pricing</div>
+          <h2 className="font-[var(--font-display)] text-[52px] leading-[1.05] mt-2">
+            Pay <em className="italic">monthly</em>. Cancel anytime.
+          </h2>
+        </div>
+        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-3 gap-4">
+          {tiers.map((t) => (
+            <div
+              key={t.name}
+              className={
+                "rounded-[16px] p-7 flex flex-col gap-3.5 relative " +
+                (t.highlight
+                  ? "bg-[var(--citrus)] text-[var(--ink-900)] border border-[var(--ink-900)]"
+                  : "bg-[var(--bg-elevated)] border border-[var(--border)]")
+              }
+            >
+              {t.highlight && (
+                <div className="absolute -top-3 left-6 bg-[var(--ink-900)] text-[var(--citrus)] text-[11px] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
+                  Most picked
+                </div>
+              )}
+              <div className="font-[var(--font-display)] italic text-[22px] leading-none">{t.name}</div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-[var(--font-display)] text-[56px] leading-none tracking-[-0.02em]">
+                  {t.price}
                 </span>
-                <p className="text-xs text-muted-foreground -mt-1">Invoice Management</p>
+                <span className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+                  /{t.per}
+                </span>
               </div>
-            </Link>
-            
-            <div className="flex items-center space-x-6">
-              {/* Navigation Links */}
-              <nav className="hidden md:flex items-center space-x-8">
-                <Link href="/features" className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium">
-                  Features
-                </Link>
-                <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium">
-                  Pricing
-                </Link>
-                <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium">
-                  About
-                </Link>
-              </nav>
-              
-              <div className="flex items-center space-x-3">
-                <ThemeSelector />
-                <div className="hidden sm:block w-px h-6 bg-border"></div>
-                <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-[var(--mauve)]/10">
-                  <Link href="/login">Sign In</Link>
+              <div className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+                {t.desc}
+              </div>
+              <ul className="list-none p-0 m-0 flex flex-col gap-2 text-[13px]">
+                {t.feats.map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <span className="inline-block w-4 text-[var(--ink-900)]">✓</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto pt-2">
+                <Button
+                  asChild
+                  size="lg"
+                  variant={t.highlight ? "default" : "secondary"}
+                  className={
+                    "w-full justify-center " +
+                    (t.highlight
+                      ? "bg-[var(--ink-900)] text-[var(--citrus)] border-[var(--ink-900)] hover:bg-[#1f1e1b]"
+                      : "")
+                  }
+                >
+                  <Link href="/register">{t.cta}</Link>
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-[var(--blue)] to-[var(--mauve)] hover:from-[var(--blue)]/90 hover:to-[var(--mauve)]/90 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                  <Link href="/register" className="flex items-center space-x-2">
-                    <span>Get Started</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--blue)]/5 via-[var(--mauve)]/5 to-[var(--peach)]/5"></div>
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center space-x-2 bg-[var(--blue)]/10 text-[var(--blue)] px-4 py-2 rounded-full text-sm font-medium mb-8">
-              <Sparkles className="h-4 w-4" />
-              <span>Trusted by 10,000+ businesses</span>
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-              Professional
-              <span className="bg-gradient-to-r from-[var(--blue)] to-[var(--mauve)] bg-clip-text text-transparent"> Invoice Management</span>
-              <br />Made Simple
-            </h1>
-            <p className="text-xl lg:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-              Create, send, and track invoices with ease. Manage your clients, 
-              streamline payments, and grow your business with our all-in-one platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button asChild size="lg" className="bg-[var(--blue)] hover:bg-[var(--blue)]/90 h-14 px-8 text-lg">
-                <Link href="/register" className="flex items-center space-x-2">
-                  <span>Start Free Trial</span>
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-[var(--mauve)] text-[var(--mauve)] hover:bg-[var(--mauve)]/10 h-14 px-8 text-lg">
-                <Link href="/login">Sign In</Link>
-              </Button>
-            </div>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--blue)] mb-2">10K+</div>
-                <div className="text-muted-foreground">Active Users</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--green)] mb-2">$2M+</div>
-                <div className="text-muted-foreground">Invoices Processed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--peach)] mb-2">99.9%</div>
-                <div className="text-muted-foreground">Uptime</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Everything you need to manage invoices
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powerful features designed to streamline your invoicing workflow and help you get paid faster.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="border-l-4 border-l-[var(--blue)] hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="text-center pb-4">
-                <div className="p-4 rounded-xl bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-[var(--blue)]" />
-                </div>
-                <CardTitle className="text-xl">Create Invoices</CardTitle>
-                <CardDescription className="text-base">
-                  Build professional invoices with customizable templates, line items, and branding
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-l-4 border-l-[var(--green)] hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="text-center pb-4">
-                <div className="p-4 rounded-xl bg-[var(--green)]/10 w-fit mx-auto mb-4">
-                  <Users className="h-8 w-8 text-[var(--green)]" />
-                </div>
-                <CardTitle className="text-xl">Manage Clients</CardTitle>
-                <CardDescription className="text-base">
-                  Keep track of all your clients with detailed contact information and history
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-l-4 border-l-[var(--peach)] hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="text-center pb-4">
-                <div className="p-4 rounded-xl bg-[var(--peach)]/10 w-fit mx-auto mb-4">
-                  <DollarSign className="h-8 w-8 text-[var(--peach)]" />
-                </div>
-                <CardTitle className="text-xl">Track Payments</CardTitle>
-                <CardDescription className="text-base">
-                  Monitor invoice status, payment history, and revenue analytics in real-time
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-l-4 border-l-[var(--mauve)] hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="text-center pb-4">
-                <div className="p-4 rounded-xl bg-[var(--mauve)]/10 w-fit mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-[var(--mauve)]" />
-                </div>
-                <CardTitle className="text-xl">Easy Management</CardTitle>
-                <CardDescription className="text-base">
-                  Intuitive dashboard to manage all aspects of your business efficiently
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Simple, transparent pricing
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Choose the plan that fits your business needs. No hidden fees, no surprises.
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-              {/* Free Plan */}
-              <Card className="border-l-4 border-l-[var(--green)] hover:shadow-lg transition-all duration-300">
-                <CardHeader className="text-center pb-6 pt-6">
-                  <div className="p-3 rounded-lg bg-[var(--green)]/10 w-fit mx-auto mb-4">
-                    <CheckCircle className="h-6 w-6 text-[var(--green)]" />
-                  </div>
-                  <CardTitle className="text-2xl mb-2">Free</CardTitle>
-                  <CardDescription className="text-base mb-6">Perfect for getting started</CardDescription>
-                  <div className="min-h-[80px] flex flex-col justify-center">
-                    <div className="text-4xl font-bold text-foreground">$0<span className="text-lg text-muted-foreground">/month</span></div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 flex flex-col h-full">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--green)]" />
-                      <span className="text-sm">Up to 5 invoices/month</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--green)]" />
-                      <span className="text-sm">Basic templates</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--green)]" />
-                      <span className="text-sm">Email support</span>
-                    </div>
-                  </div>
-                  <div className="mt-auto pt-4">
-                    <Button asChild className="w-full bg-[var(--green)] hover:bg-[var(--green)]/90">
-                      <Link href="/register">Get Started Free</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Pro Plan */}
-              <Card className="border-l-4 border-l-[var(--blue)] hover:shadow-lg transition-all duration-300 relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-[var(--blue)] text-white px-3 py-1 rounded-full text-xs font-medium">Most Popular</span>
-                </div>
-                <CardHeader className="text-center pb-6 pt-6">
-                  <div className="p-3 rounded-lg bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                    <FileText className="h-6 w-6 text-[var(--blue)]" />
-                  </div>
-                  <CardTitle className="text-2xl mb-2">Pro</CardTitle>
-                  <CardDescription className="text-base mb-6">For growing businesses</CardDescription>
-                  <div className="min-h-[80px] flex flex-col justify-center">
-                    <div className="text-4xl font-bold text-foreground">$29<span className="text-lg text-muted-foreground">/month</span></div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 flex flex-col h-full">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--blue)]" />
-                      <span className="text-sm">Unlimited invoices</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--blue)]" />
-                      <span className="text-sm">Advanced templates</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--blue)]" />
-                      <span className="text-sm">Priority support</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--blue)]" />
-                      <span className="text-sm">Analytics dashboard</span>
-                    </div>
-                  </div>
-                  <div className="mt-auto pt-4">
-                    <Button asChild className="w-full bg-[var(--blue)] hover:bg-[var(--blue)]/90">
-                      <Link href="/register">Start Pro Trial</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Enterprise Plan */}
-              <Card className="border-l-4 border-l-[var(--mauve)] hover:shadow-lg transition-all duration-300">
-                <CardHeader className="text-center pb-6 pt-6">
-                  <div className="p-3 rounded-lg bg-[var(--mauve)]/10 w-fit mx-auto mb-4">
-                    <Users className="h-6 w-6 text-[var(--mauve)]" />
-                  </div>
-                  <CardTitle className="text-2xl mb-2">Enterprise</CardTitle>
-                  <CardDescription className="text-base mb-6">For large organizations</CardDescription>
-                  <div className="min-h-[80px] flex flex-col justify-center">
-                    <div className="text-4xl font-bold text-foreground">Custom</div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 flex flex-col h-full">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--mauve)]" />
-                      <span className="text-sm">Everything in Pro</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--mauve)]" />
-                      <span className="text-sm">Custom integrations</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--mauve)]" />
-                      <span className="text-sm">Dedicated support</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-[var(--mauve)]" />
-                      <span className="text-sm">SLA guarantee</span>
-                    </div>
-                  </div>
-                  <div className="mt-auto pt-4">
-                    <Button asChild variant="outline" className="w-full border-[var(--mauve)] text-[var(--mauve)] hover:bg-[var(--mauve)]/10">
-                      <Link href="/contact">Contact Sales</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
-              Why choose Vibe Voicer?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-              We're on a mission to simplify invoice management for businesses of all sizes. 
-              Our platform combines powerful features with an intuitive interface to help you get paid faster.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-[var(--blue)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Easy to Use</h3>
-                <p className="text-muted-foreground text-sm">Intuitive interface that anyone can master in minutes</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--green)]/10 w-fit mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-[var(--green)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Reliable</h3>
-                <p className="text-muted-foreground text-sm">99.9% uptime with enterprise-grade security</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--peach)]/10 w-fit mx-auto mb-4">
-                  <DollarSign className="h-8 w-8 text-[var(--peach)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Cost Effective</h3>
-                <p className="text-muted-foreground text-sm">Transparent pricing with no hidden fees</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--mauve)]/10 w-fit mx-auto mb-4">
-                  <Users className="h-8 w-8 text-[var(--mauve)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Support</h3>
-                <p className="text-muted-foreground text-sm">Dedicated support team ready to help</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
-              Ready to streamline your invoicing?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Join thousands of businesses already using Vibe Voicer to manage their invoices and grow their revenue.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-[var(--sky)] hover:bg-[var(--sky)]/90 h-14 px-8 text-lg">
-                <Link href="/register" className="flex items-center space-x-2">
-                  <span>Start Your Free Trial</span>
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-[var(--green)] text-[var(--green)] hover:bg-[var(--green)]/10 h-14 px-8 text-lg">
-                <Link href="/pricing">View Pricing</Link>
-              </Button>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 

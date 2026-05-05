@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from "next/server"
+import type { DiscountType, InvoiceStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+
+type IncomingItem = {
+  description?: unknown
+  quantity?: unknown
+  unitPrice?: unknown
+}
+
+type IncomingOriginalItem = IncomingItem & { id?: unknown }
+
+const toNumber = (value: unknown, fallback = 0): number => {
+  if (typeof value === "number" && Number.isFinite(value)) return value
+  if (typeof value === "string") {
+    const parsed = parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : fallback
+  }
+  return fallback
+}
 
 export async function GET(
   request: NextRequest,
@@ -16,9 +34,7 @@ export async function GET(
     }
 
     const { id } = await params
-    console.log("Fetching invoice with ID:", id)
-    console.log("User ID:", session.user.id)
-    
+
     const invoice = await db.invoice.findFirst({
       where: {
         id,
@@ -32,17 +48,9 @@ export async function GET(
     })
 
     if (!invoice) {
-      console.log("Invoice not found for ID:", id, "and user:", session.user.id)
-      // Check if invoice exists at all (for debugging)
-      const anyInvoice = await db.invoice.findFirst({
-        where: { id },
-        select: { id: true, userId: true, invoiceNumber: true }
-      })
-      console.log("Any invoice with this ID:", anyInvoice)
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 })
     }
 
-    // Convert Decimal fields to numbers for JSON serialization
     const serializedInvoice = {
       ...invoice,
       subtotal: Number(invoice.subtotal),
@@ -90,85 +98,153 @@ export async function PUT(
     const body = await request.json()
     const {
       clientId,
-      invoiceNumber,
-      publicSlug,
       status,
       issueDate,
       dueDate,
-      subtotal,
+      discountType,
+      discountValue,
       taxRate,
-      taxAmount,
-      total,
       notes,
+      paymentTerms,
       items,
       originalItems,
-    } = body
+    } = body as {
+      clientId?: string
+      status?: InvoiceStatus
+      issueDate?: string
+      dueDate?: string
+      discountType?: DiscountType
+      discountValue?: unknown
+      taxRate?: unknown
+      notes?: string
+      paymentTerms?: string
+      items?: IncomingItem[]
+      originalItems?: IncomingOriginalItem[]
+    }
 
-    // Check if invoice exists and user has access
     const existingInvoice = await db.invoice.findFirst({
       where: {
         id,
         userId: session.user.id,
       },
+      select: { id: true, clientId: true },
     })
 
     if (!existingInvoice) {
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 })
     }
 
-    // Update invoice
-    const invoice = await db.invoice.update({
-      where: { id },
-      data: {
-        clientId,
-        invoiceNumber,
-        publicSlug,
-        status,
-        issueDate: issueDate ? new Date(issueDate) : undefined,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
-        subtotal: subtotal ? parseFloat(subtotal) : undefined,
-        taxRate: taxRate ? parseFloat(taxRate) : undefined,
-        taxAmount: taxAmount ? parseFloat(taxAmount) : undefined,
-        total: total ? parseFloat(total) : undefined,
-        notes,
-      },
-      include: {
-        client: true,
-        items: true,
-        payments: true,
-      },
-    })
-
-    // Update items if provided
-    if (items || originalItems) {
-      // Update original items (description only)
-      if (originalItems && originalItems.length > 0) {
-        for (const item of originalItems) {
-          await db.invoiceItem.update({
-            where: { id: item.id },
-            data: {
-              description: item.description,
-            },
-          })
-        }
-      }
-
-      // Add new items
-      if (items && items.length > 0) {
-        await db.invoiceItem.createMany({
-          data: items.map((item: any) => ({
-            invoiceId: id,
-            description: item.description,
-            quantity: parseFloat(item.quantity) || 1,
-            unitPrice: parseFloat(item.unitPrice) || 0,
-            total: parseFloat(item.quantity) * parseFloat(item.unitPrice) || 0,
-          })),
-        })
+    if (clientId && clientId !== existingInvoice.clientId) {
+      const clientOwned = await db.client.findFirst({
+        where: { id: clientId, userId: session.user.id },
+        select: { id: true },
+      })
+      if (!clientOwned) {
+        return NextResponse.json({ error: "Client not found" }, { status: 404 })
       }
     }
 
-    return NextResponse.json(invoice)
+    const updated = await db.$transaction(async tx => {
+      if (originalItems && originalItems.length > 0) {
+        for (const item of originalItems) {
+          if (typeof item.id !== "string" || !item.id) {
+            throw new ItemNotFoundError()
+          }
+          const quantity = toNumber(item.quantity, 0)
+          const unitPrice = toNumber(item.unitPrice, 0)
+          const result = await tx.invoiceItem.updateMany({
+            where: { id: item.id, invoiceId: id },
+            data: {
+              description:
+                typeof item.description === "string" ? item.description : "",
+              quantity,
+              unitPrice,
+              total: quantity * unitPrice,
+            },
+          })
+          if (result.count === 0) {
+            throw new ItemNotFoundError()
+          }
+        }
+      }
+
+      if (items && items.length > 0) {
+        await tx.invoiceItem.createMany({
+          data: items.map(item => {
+            const quantity = toNumber(item.quantity, 1)
+            const unitPrice = toNumber(item.unitPrice, 0)
+            return {
+              invoiceId: id,
+              description:
+                typeof item.description === "string" ? item.description : "",
+              quantity,
+              unitPrice,
+              total: quantity * unitPrice,
+            }
+          }),
+        })
+      }
+
+      const liveItems = await tx.invoiceItem.findMany({
+        where: { invoiceId: id },
+        select: { quantity: true, unitPrice: true },
+      })
+      const subtotal = liveItems.reduce(
+        (sum, item) => sum + Number(item.quantity) * Number(item.unitPrice),
+        0
+      )
+      const discountTypeFinal: DiscountType | undefined = discountType
+      const discountValueNum =
+        discountValue !== undefined ? toNumber(discountValue, 0) : undefined
+      const taxRateNum = taxRate !== undefined ? toNumber(taxRate, 0) : undefined
+
+      const effectiveDiscountType = discountTypeFinal ?? "PERCENTAGE"
+      const effectiveDiscountValue = discountValueNum ?? 0
+      const discountAmount =
+        effectiveDiscountValue > 0
+          ? effectiveDiscountType === "PERCENTAGE"
+            ? (subtotal * effectiveDiscountValue) / 100
+            : effectiveDiscountValue
+          : 0
+      const effectiveTaxRate = taxRateNum ?? 0
+      const taxAmount = ((subtotal - discountAmount) * effectiveTaxRate) / 100
+      const total = subtotal - discountAmount + taxAmount
+
+      return tx.invoice.update({
+        where: { id },
+        data: {
+          ...(clientId ? { clientId } : {}),
+          ...(status ? { status } : {}),
+          ...(issueDate ? { issueDate: new Date(issueDate) } : {}),
+          ...(dueDate ? { dueDate: new Date(dueDate) } : {}),
+          ...(discountTypeFinal ? { discountType: discountTypeFinal } : {}),
+          ...(discountValueNum !== undefined
+            ? { discountValue: discountValueNum }
+            : {}),
+          ...(taxRateNum !== undefined ? { taxRate: taxRateNum } : {}),
+          ...(notes !== undefined ? { notes } : {}),
+          ...(paymentTerms !== undefined ? { paymentTerms } : {}),
+          subtotal,
+          discountAmount,
+          taxAmount,
+          total,
+        },
+        include: {
+          client: true,
+          items: true,
+          payments: true,
+        },
+      })
+    })
+
+    return NextResponse.json(updated)
   } catch (error) {
+    if (error instanceof ItemNotFoundError) {
+      return NextResponse.json(
+        { error: "Invoice item not found" },
+        { status: 404 }
+      )
+    }
     console.error("Error updating invoice:", error)
     return NextResponse.json(
       { error: "Failed to update invoice" },
@@ -191,7 +267,6 @@ export async function DELETE(
     }
 
     const { id } = await params
-    // Check if invoice exists and user has access
     const existingInvoice = await db.invoice.findFirst({
       where: {
         id,
@@ -214,5 +289,12 @@ export async function DELETE(
       { error: "Failed to delete invoice" },
       { status: 500 }
     )
+  }
+}
+
+class ItemNotFoundError extends Error {
+  constructor() {
+    super("Invoice item not found")
+    this.name = "ItemNotFoundError"
   }
 }

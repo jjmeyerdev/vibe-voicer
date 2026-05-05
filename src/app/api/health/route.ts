@@ -9,14 +9,12 @@ export async function GET(request: NextRequest) {
       version: process.env.npm_package_version || '1.0.0',
       services: {
         database: !!process.env.DATABASE_URL,
-        resend: !!process.env.RESEND_API_KEY,
         auth: !!process.env.BETTER_AUTH_SECRET,
         google: !!process.env.GOOGLE_CLIENT_ID,
         github: !!process.env.GITHUB_CLIENT_ID,
       },
       urls: {
         authUrl: process.env.BETTER_AUTH_URL,
-        smtpFrom: process.env.SMTP_FROM,
       }
     }
 

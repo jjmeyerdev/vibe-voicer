@@ -2,658 +2,312 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { 
-  User, 
-  Building2, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  FileText, 
-  CreditCard, 
-  Download,
-  Settings as SettingsIcon,
-  User2,
-  Shield,
-  Lock,
-  Eye,
-  EyeOff,
-  Save,
-  DollarSign,
-  Percent,
-  Calendar,
-  Hash,
-  Key
-} from "lucide-react"
-import { Footer } from "@/components/footer"
+import { toast } from "sonner"
 import { ProtectedLayout } from "@/components/protected-layout"
 
-export default function SettingsPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showApiKey, setShowApiKey] = useState(false)
-  const [activeTab, setActiveTab] = useState("company")
-  
-  // Password change state
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  })
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
-  
-  // Personal settings state
-  const [personalSettings, setPersonalSettings] = useState({
-    fullName: "",
-    email: ""
-  })
-  const [isSaving, setIsSaving] = useState(false)
+type PersonalSettings = { fullName: string; email: string }
+type InvoiceSettings = {
+  taxRate: number
+  currency: string
+  invoicePrefix: string
+  nextInvoiceNumber: number
+  paymentTerms: string
+}
+type AccountSettings = { currentPassword: string; newPassword: string; confirmPassword: string }
 
-  // Invoice settings state
-  const [invoiceSettings, setInvoiceSettings] = useState({
+export default function SettingsPage() {
+  const [personal, setPersonal] = useState<PersonalSettings>({ fullName: "", email: "" })
+  const [invoice, setInvoice] = useState<InvoiceSettings>({
     taxRate: 0,
     currency: "USD",
     invoicePrefix: "INV",
     nextInvoiceNumber: 1,
-    paymentTerms: ""
+    paymentTerms: "",
   })
-  const [isSavingInvoice, setIsSavingInvoice] = useState(false)
-
-  // Account settings state
-  const [accountSettings, setAccountSettings] = useState({
+  const [account, setAccount] = useState<AccountSettings>({
     currentPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   })
+  const [isSavingPersonal, setIsSavingPersonal] = useState(false)
+  const [isSavingInvoice, setIsSavingInvoice] = useState(false)
   const [isSavingAccount, setIsSavingAccount] = useState(false)
 
-  // Load personal settings on component mount
   useEffect(() => {
-    const loadPersonalSettings = async () => {
+    const load = async () => {
       try {
-        const response = await fetch("/api/settings/personal", {
-          credentials: "include"
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          setPersonalSettings({
-            fullName: data.fullName || "",
-            email: data.email || ""
+        const [personalRes, invoiceRes] = await Promise.all([
+          fetch("/api/settings/personal", { credentials: "include" }),
+          fetch("/api/settings/invoice", { credentials: "include" }),
+        ])
+        if (personalRes.ok) {
+          const data = (await personalRes.json()) as Partial<PersonalSettings>
+          setPersonal({ fullName: data.fullName ?? "", email: data.email ?? "" })
+        }
+        if (invoiceRes.ok) {
+          const data = (await invoiceRes.json()) as Partial<InvoiceSettings>
+          setInvoice({
+            taxRate: data.taxRate ?? 0,
+            currency: data.currency ?? "USD",
+            invoicePrefix: data.invoicePrefix ?? "INV",
+            nextInvoiceNumber: data.nextInvoiceNumber ?? 1,
+            paymentTerms: data.paymentTerms ?? "",
           })
         }
       } catch (error) {
-        console.error("Error loading personal settings:", error)
+        console.error("Settings load failed:", error)
       }
     }
-
-    loadPersonalSettings()
+    load()
   }, [])
 
-  // Load invoice settings on component mount
-  useEffect(() => {
-    const loadInvoiceSettings = async () => {
-      try {
-        const response = await fetch("/api/settings/invoice", {
-          credentials: "include"
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          setInvoiceSettings({
-            taxRate: data.taxRate || 0,
-            currency: data.currency || "USD",
-            invoicePrefix: data.invoicePrefix || "INV",
-            nextInvoiceNumber: data.nextInvoiceNumber || 1,
-            paymentTerms: data.paymentTerms || ""
-          })
-        }
-      } catch (error) {
-        console.error("Error loading invoice settings:", error)
-      }
-    }
-
-    loadInvoiceSettings()
-  }, [])
-
-  // Handle personal settings save
-  const handleSavePersonalSettings = async () => {
+  const handleSavePersonal = async () => {
     try {
-      setIsSaving(true)
-      
-      // TODO: Replace with actual API call
+      setIsSavingPersonal(true)
       const response = await fetch("/api/settings/personal", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(personalSettings),
+        body: JSON.stringify(personal),
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to save personal settings")
-      }
-
-      toast.success("Personal settings saved successfully!")
+      if (!response.ok) throw new Error("save failed")
+      toast.success("Personal info saved.")
     } catch (error) {
-      console.error("Error saving personal settings:", error)
-      toast.error("Failed to save personal settings")
+      console.error("Personal save error:", error)
+      toast.error("Couldn’t save it.")
     } finally {
-      setIsSaving(false)
+      setIsSavingPersonal(false)
     }
   }
 
-  // Handle invoice settings save
-  const handleSaveInvoiceSettings = async () => {
+  const handleSaveInvoice = async () => {
     try {
       setIsSavingInvoice(true)
-      
       const response = await fetch("/api/settings/invoice", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(invoiceSettings),
+        body: JSON.stringify(invoice),
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to save invoice settings")
-      }
-
-      toast.success("Invoice settings saved successfully!")
+      if (!response.ok) throw new Error("save failed")
+      toast.success("Invoice defaults saved.")
     } catch (error) {
-      console.error("Error saving invoice settings:", error)
-      toast.error("Failed to save invoice settings")
+      console.error("Invoice save error:", error)
+      toast.error("Couldn’t save it.")
     } finally {
       setIsSavingInvoice(false)
     }
   }
 
-  // Handle account settings save
-  const handleSaveAccountSettings = async () => {
+  const handleChangePassword = async () => {
     try {
       setIsSavingAccount(true)
-      
-      // Validate passwords match
-      if (accountSettings.newPassword !== accountSettings.confirmPassword) {
-        toast.error("New passwords do not match")
+      if (account.newPassword !== account.confirmPassword) {
+        toast.error("The two new passwords don’t match.")
         return
       }
-
-      const response = await fetch("/api/settings/account", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      if (account.newPassword.length < 8) {
+        toast.error("Eight characters minimum.")
+        return
+      }
+      const response = await fetch("/api/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          currentPassword: accountSettings.currentPassword,
-          newPassword: accountSettings.newPassword
+          currentPassword: account.currentPassword,
+          newPassword: account.newPassword,
+          revokeOtherSessions: true,
         }),
       })
-
       if (!response.ok) {
-        throw new Error("Failed to save account settings")
+        const data = (await response.json().catch(() => ({}))) as { error?: string }
+        throw new Error(data.error ?? "Couldn’t change the password.")
       }
-
-      toast.success("Account settings saved successfully!")
-      
-      // Clear password fields
-      setAccountSettings({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      })
+      toast.success("Password updated.")
+      setAccount({ currentPassword: "", newPassword: "", confirmPassword: "" })
     } catch (error) {
-      console.error("Error saving account settings:", error)
-      toast.error("Failed to save account settings")
+      const message = error instanceof Error ? error.message : "Couldn’t change the password."
+      toast.error(message)
     } finally {
       setIsSavingAccount(false)
     }
   }
 
-  // Handle password change
-  const handleChangePassword = async () => {
-    try {
-      setIsChangingPassword(true)
-      
-      // Validate passwords match
-      if (passwordData.newPassword !== passwordData.confirmPassword) {
-        toast.error("New passwords don't match")
-        return
-      }
-      
-      if (passwordData.newPassword.length < 8) {
-        toast.error("New password must be at least 8 characters long")
-        return
-      }
-
-      const response = await fetch("/api/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          currentPassword: passwordData.currentPassword,
-          newPassword: passwordData.newPassword,
-          revokeOtherSessions: true
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to change password")
-      }
-
-      toast.success("Password changed successfully!")
-      
-      // Clear password fields
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      })
-    } catch (error) {
-      console.error("Error changing password:", error)
-      toast.error("Failed to change password")
-    } finally {
-      setIsChangingPassword(false)
-    }
-  }
-
   return (
     <ProtectedLayout>
-      {/* Hero Section */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--mauve)]/5 via-[var(--blue)]/5 to-[var(--peach)]/5"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9InZhcig--bWF1dmUpIiBmaWxsLW9wYWNpdHk9IjAuMDMiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-40"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[var(--mauve)]/20 to-[var(--pink)]/20 rounded-3xl mb-8 group hover:scale-110 transition-transform duration-500">
-              <SettingsIcon className="h-10 w-10 text-[var(--mauve)] group-hover:rotate-12 transition-transform duration-500" />
-            </div>
-            <h1 className="text-6xl lg:text-8xl font-light text-foreground mb-8 group">
-              <span className="bg-gradient-to-r from-[var(--mauve)] via-[var(--blue)] to-[var(--peach)] bg-clip-text text-transparent transition-all duration-700">
-                Settings
-              </span>
-            </h1>
-            <p className="text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Customize your experience and manage your account preferences
-            </p>
-          </div>
-        </div>
-      </section>
+      <div className="max-w-[920px]">
+        <Tabs defaultValue="personal">
+          <TabsList>
+            <TabsTrigger value="personal">Personal</TabsTrigger>
+            <TabsTrigger value="invoice">Invoice defaults</TabsTrigger>
+            <TabsTrigger value="account">Account</TabsTrigger>
+          </TabsList>
 
-      <div className="space-y-16">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-16">
-          {/* Quick Stats */}
-          <section className="py-16 mb-20">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-foreground mb-4">
-                  <span className="bg-gradient-to-r from-[var(--mauve)] to-[var(--blue)] bg-clip-text text-transparent">Quick Access</span>
-                </h2>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                  Jump into the settings you need most
-                </p>
+          <TabsContent value="personal" className="mt-2">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+              <div className="t-overline">Personal info</div>
+              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+                Whose name should appear at the top of invoices?
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="fullName">Full name</Label>
+                  <Input
+                    id="fullName"
+                    placeholder="Anya Kowalski"
+                    value={personal.fullName}
+                    onChange={(e) => setPersonal((s) => ({ ...s, fullName: e.target.value }))}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@studio.com"
+                    value={personal.email}
+                    onChange={(e) => setPersonal((s) => ({ ...s, email: e.target.value }))}
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
-                <Card 
-                  className={`border-l-4 border-l-[var(--mauve)] hover:shadow-xl hover:shadow-[var(--mauve)]/20 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] cursor-pointer group h-full ${
-                    activeTab === "company" 
-                      ? "shadow-xl shadow-[var(--mauve)]/20 -translate-y-2 scale-[1.02]" 
-                      : ""
-                  }`}
-                  onClick={() => setActiveTab("company")}
-                >
-                  <CardHeader className="text-center pb-4 h-full flex flex-col justify-center items-center min-h-[200px]">
-                    <div className="p-4 rounded-xl bg-[var(--mauve)]/10 w-fit mx-auto mb-4 group-hover:bg-[var(--mauve)]/20 group-hover:scale-110 transition-all duration-300">
-                      <User2 className="h-8 w-8 text-[var(--mauve)] group-hover:rotate-12 transition-transform duration-300" />
-                    </div>
-                    <CardTitle className="text-xl mb-2 text-center">Personal Info</CardTitle>
-                    <CardDescription className="text-base text-center">
-                      Update your personal details and preferences
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-                  
-                <Card 
-                  className={`border-l-4 border-l-[var(--blue)] hover:shadow-xl hover:shadow-[var(--blue)]/20 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] cursor-pointer group h-full ${
-                    activeTab === "invoice" 
-                      ? "shadow-xl shadow-[var(--blue)]/20 -translate-y-2 scale-[1.02]" 
-                      : ""
-                  }`}
-                  onClick={() => setActiveTab("invoice")}
-                >
-                  <CardHeader className="text-center pb-4 h-full flex flex-col justify-center items-center min-h-[200px]">
-                    <div className="p-4 rounded-xl bg-[var(--blue)]/10 w-fit mx-auto mb-4 group-hover:bg-[var(--blue)]/20 group-hover:scale-110 transition-all duration-300">
-                      <FileText className="h-8 w-8 text-[var(--blue)] group-hover:rotate-12 transition-transform duration-300" />
-                    </div>
-                    <CardTitle className="text-xl mb-2 text-center">Invoice Settings</CardTitle>
-                    <CardDescription className="text-base text-center">
-                      Customize default invoice preferences
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-                  
-                <Card 
-                  className={`border-l-4 border-l-[var(--peach)] hover:shadow-xl hover:shadow-[var(--peach)]/20 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] cursor-pointer group h-full ${
-                    activeTab === "password" 
-                      ? "shadow-xl shadow-[var(--peach)]/20 -translate-y-2 scale-[1.02]" 
-                      : ""
-                  }`}
-                  onClick={() => setActiveTab("password")}
-                >
-                  <CardHeader className="text-center pb-4 h-full flex flex-col justify-center items-center min-h-[200px]">
-                    <div className="p-4 rounded-xl bg-[var(--peach)]/10 w-fit mx-auto mb-4 group-hover:bg-[var(--peach)]/20 group-hover:scale-110 transition-all duration-300">
-                      <Lock className="h-8 w-8 text-[var(--peach)] group-hover:rotate-12 transition-transform duration-300" />
-                    </div>
-                    <CardTitle className="text-xl mb-2 text-center">Account</CardTitle>
-                    <CardDescription className="text-base text-center">
-                      Change your password and security settings
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+                <Button onClick={handleSavePersonal} disabled={isSavingPersonal}>
+                  {isSavingPersonal ? "Saving…" : "Save"}
+                </Button>
               </div>
             </div>
-          </section>
-          
-
-          <TabsContent value="company">
-            <Card className="border-l-4 border-l-[var(--mauve)] shadow-lg">
-              <CardHeader className="text-center pb-6">
-                <div className="p-3 rounded-xl bg-[var(--mauve)]/10 w-fit mx-auto mb-4">
-                  <User2 className="h-8 w-8 text-[var(--mauve)]" />
-                </div>
-                <CardTitle className="text-2xl font-bold">
-                  Personal Information
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  Update your personal details
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="max-w-md mx-auto space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-base font-medium text-foreground text-center block">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="fullName"
-                      placeholder="Enter your full name"
-                      value={personalSettings.fullName}
-                      onChange={(e) => setPersonalSettings(prev => ({ ...prev, fullName: e.target.value }))}
-                      className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--mauve)]/20 focus:border-[var(--mauve)] focus:ring-2 focus:ring-[var(--mauve)]/20 transition-all duration-200"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-base font-medium text-foreground text-center block">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email address"
-                      value={personalSettings.email}
-                      onChange={(e) => setPersonalSettings(prev => ({ ...prev, email: e.target.value }))}
-                      className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--blue)]/20 focus:border-[var(--blue)] focus:ring-2 focus:ring-[var(--blue)]/20 transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-center pt-8">
-                  <Button 
-                    onClick={handleSavePersonalSettings}
-                    disabled={isSaving}
-                    className="bg-[var(--mauve)] hover:bg-[var(--mauve)]/90 disabled:opacity-50"
-                  >
-                    <Save className="h-6 w-6 mr-3" />
-                    {isSaving ? "Saving..." : "Save Personal Settings"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
-          <TabsContent value="invoice">
-            <Card className="border-l-4 border-l-[var(--blue)] shadow-lg">
-              <CardHeader className="text-center pb-6">
-                <div className="p-3 rounded-xl bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-[var(--blue)]" />
+          <TabsContent value="invoice" className="mt-2">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+              <div className="t-overline">Invoice defaults</div>
+              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+                What every new invoice starts with.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="taxRate">Tax rate (%)</Label>
+                  <Input
+                    id="taxRate"
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    max="100"
+                    value={invoice.taxRate}
+                    onChange={(e) =>
+                      setInvoice((s) => ({ ...s, taxRate: parseFloat(e.target.value) || 0 }))
+                    }
+                  />
                 </div>
-                <CardTitle className="text-2xl font-bold">
-                  Invoice Settings
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  Customize your default invoice preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="max-w-2xl mx-auto space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="taxRate" className="text-base font-medium text-foreground text-center block">
-                        Tax Rate (%)
-                      </Label>
-                      <Input
-                        id="taxRate"
-                        type="number"
-                        placeholder="0"
-                        value={invoiceSettings.taxRate}
-                        onChange={(e) => setInvoiceSettings(prev => ({ ...prev, taxRate: parseFloat(e.target.value) || 0 }))}
-                        className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--yellow)]/20 focus:border-[var(--yellow)] focus:ring-2 focus:ring-[var(--yellow)]/20 transition-all duration-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="currency" className="text-base font-medium text-foreground text-center block">
-                        Currency
-                      </Label>
-                      <Input
-                        id="currency"
-                        placeholder="USD"
-                        value={invoiceSettings.currency}
-                        onChange={(e) => setInvoiceSettings(prev => ({ ...prev, currency: e.target.value }))}
-                        className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--green)]/20 focus:border-[var(--green)] focus:ring-2 focus:ring-[var(--green)]/20 transition-all duration-200"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="invoicePrefix" className="text-base font-medium text-foreground text-center block">
-                        Invoice Prefix
-                      </Label>
-                      <Input
-                        id="invoicePrefix"
-                        placeholder="INV"
-                        value={invoiceSettings.invoicePrefix}
-                        onChange={(e) => setInvoiceSettings(prev => ({ ...prev, invoicePrefix: e.target.value }))}
-                        className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--mauve)]/20 focus:border-[var(--mauve)] focus:ring-2 focus:ring-[var(--mauve)]/20 transition-all duration-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="nextNumber" className="text-base font-medium text-foreground text-center block">
-                        Next Invoice Number
-                      </Label>
-                      <Input
-                        id="nextNumber"
-                        type="number"
-                        placeholder="1"
-                        value={invoiceSettings.nextInvoiceNumber}
-                        onChange={(e) => setInvoiceSettings(prev => ({ ...prev, nextInvoiceNumber: parseInt(e.target.value) || 1 }))}
-                        className="h-12 border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--pink)]/20 focus:border-[var(--pink)] focus:ring-2 focus:ring-[var(--pink)]/20 transition-all duration-200"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="paymentTerms" className="text-base font-medium text-foreground text-center block">
-                      Default Payment Terms
-                    </Label>
-                    <Textarea
-                      id="paymentTerms"
-                      placeholder="e.g., Net 30 days, Due on receipt, etc."
-                      value={invoiceSettings.paymentTerms}
-                      onChange={(e) => setInvoiceSettings(prev => ({ ...prev, paymentTerms: e.target.value }))}
-                      className="min-h-[120px] border-2 rounded-lg text-base bg-background/50 backdrop-blur-sm border-[var(--teal)]/20 focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 transition-all duration-200"
-                    />
-                  </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Input
+                    id="currency"
+                    placeholder="USD"
+                    value={invoice.currency}
+                    onChange={(e) => setInvoice((s) => ({ ...s, currency: e.target.value }))}
+                  />
                 </div>
-
-                <div className="flex justify-center pt-8">
-                  <Button 
-                    onClick={handleSaveInvoiceSettings}
-                    disabled={isSavingInvoice}
-                    className="bg-[var(--blue)] hover:bg-[var(--blue)]/90"
-                  >
-                    <Save className="h-6 w-6 mr-3" />
-                    {isSavingInvoice ? "Saving..." : "Save Invoice Settings"}
-                  </Button>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="invoicePrefix">Invoice prefix</Label>
+                  <Input
+                    id="invoicePrefix"
+                    placeholder="INV"
+                    value={invoice.invoicePrefix}
+                    onChange={(e) => setInvoice((s) => ({ ...s, invoicePrefix: e.target.value }))}
+                  />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="nextNumber">Next invoice number</Label>
+                  <Input
+                    id="nextNumber"
+                    type="number"
+                    min="1"
+                    value={invoice.nextInvoiceNumber}
+                    onChange={(e) =>
+                      setInvoice((s) => ({
+                        ...s,
+                        nextInvoiceNumber: parseInt(e.target.value) || 1,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-1.5 mt-4">
+                <Label htmlFor="paymentTerms">Default payment terms</Label>
+                <Textarea
+                  id="paymentTerms"
+                  placeholder="Net 30."
+                  rows={3}
+                  value={invoice.paymentTerms}
+                  onChange={(e) => setInvoice((s) => ({ ...s, paymentTerms: e.target.value }))}
+                />
+              </div>
+              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+                <Button onClick={handleSaveInvoice} disabled={isSavingInvoice}>
+                  {isSavingInvoice ? "Saving…" : "Save"}
+                </Button>
+              </div>
+            </div>
           </TabsContent>
 
-          <TabsContent value="password">
-            <Card className="border-l-4 border-l-[var(--peach)] shadow-lg">
-              <CardHeader className="text-center pb-6">
-                <div className="p-3 rounded-xl bg-[var(--peach)]/10 w-fit mx-auto mb-4">
-                  <Lock className="h-8 w-8 text-[var(--peach)]" />
+          <TabsContent value="account" className="mt-2">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+              <div className="t-overline">Change password</div>
+              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+                We&rsquo;ll sign you out of other sessions when you change it.
+              </p>
+              <div className="flex flex-col gap-4 max-w-[420px]">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="currentPassword">Current password</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    value={account.currentPassword}
+                    onChange={(e) =>
+                      setAccount((s) => ({ ...s, currentPassword: e.target.value }))
+                    }
+                    autoComplete="current-password"
+                  />
                 </div>
-                <CardTitle className="text-2xl font-bold">
-                Account & Security
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  Update your password to keep your account secure
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="max-w-2xl mx-auto space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPasswordChange" className="text-sm font-medium text-foreground text-center block">
-                      Current Password
-                    </Label>
-                    <div className="relative max-w-md mx-auto">
-                      <Input
-                        id="currentPasswordChange"
-                        type={showCurrentPassword ? "text" : "password"}
-                        placeholder="Enter your current password"
-                        value={passwordData.currentPassword}
-                        onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                        className="h-10 border-2 rounded-lg text-sm bg-background/50 backdrop-blur-sm border-[var(--peach)]/20 focus:border-[var(--peach)] focus:ring-2 focus:ring-[var(--peach)]/20 transition-all duration-200 pr-10"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-[var(--peach)]/10"
-                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      >
-                        {showCurrentPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="newPasswordChange" className="text-sm font-medium text-foreground text-center block">
-                        New Password
-                      </Label>
-                      <div className="relative">
-                        <Input
-                          id="newPasswordChange"
-                          type={showNewPassword ? "text" : "password"}
-                          placeholder="Enter your new password"
-                          value={passwordData.newPassword}
-                          onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                          className="h-10 border-2 rounded-lg text-sm bg-background/50 backdrop-blur-sm border-[var(--peach)]/20 focus:border-[var(--peach)] focus:ring-2 focus:ring-[var(--peach)]/20 transition-all duration-200 pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-[var(--peach)]/10"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                        >
-                          {showNewPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPasswordChange" className="text-sm font-medium text-foreground text-center block">
-                        Confirm New Password
-                      </Label>
-                      <div className="relative">
-                        <Input
-                          id="confirmPasswordChange"
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirm your new password"
-                          value={passwordData.confirmPassword}
-                          onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                          className="h-10 border-2 rounded-lg text-sm bg-background/50 backdrop-blur-sm border-[var(--peach)]/20 focus:border-[var(--peach)] focus:ring-2 focus:ring-[var(--peach)]/20 transition-all duration-200 pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-[var(--peach)]/10"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                          {showConfirmPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[var(--peach)]/5 border border-[var(--peach)]/20 rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <Shield className="h-5 w-5 text-[var(--peach)] mt-0.5 flex-shrink-0" />
-                      <div className="text-sm">
-                        <p className="font-medium text-foreground mb-1">Password Requirements:</p>
-                        <ul className="text-muted-foreground space-y-1">
-                          <li>• At least 8 characters long</li>
-                          <li>• Mix of letters, numbers, and symbols recommended</li>
-                          <li>• Avoid common passwords or personal information</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="newPassword">New password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={account.newPassword}
+                    onChange={(e) => setAccount((s) => ({ ...s, newPassword: e.target.value }))}
+                    minLength={8}
+                    autoComplete="new-password"
+                  />
                 </div>
-
-                <div className="flex justify-center pt-8">
-                  <Button 
-                    onClick={handleChangePassword}
-                    disabled={isChangingPassword}
-                    className="bg-[var(--peach)] hover:bg-[var(--peach)]/90"
-                  >
-                    <Save className="h-6 w-6 mr-3" />
-                    {isChangingPassword ? "Changing Password..." : "Change Password"}
-                  </Button>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="confirmPassword">Confirm new password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={account.confirmPassword}
+                    onChange={(e) =>
+                      setAccount((s) => ({ ...s, confirmPassword: e.target.value }))
+                    }
+                    minLength={8}
+                    autoComplete="new-password"
+                  />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+                <Button onClick={handleChangePassword} disabled={isSavingAccount}>
+                  {isSavingAccount ? "Updating…" : "Change password"}
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
-      </div>
-
-      <div className="mt-16">
-        <Footer />
       </div>
     </ProtectedLayout>
   )

@@ -1,50 +1,36 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signIn } from "@/lib/auth-client"
 import { toast } from "sonner"
-import { ThemeSelector } from "@/components/theme-selector"
-import { Footer } from "@/components/footer"
-import { PublicNavigation } from "@/components/public-navigation"
+import { AuthShell } from "@/components/auth-shell"
 import { getEnabledOAuthProviders } from "@/lib/oauth-config"
-import { FileText, Users, DollarSign, CheckCircle, ArrowRight, Mail, Lock, Sparkles, LogIn } from "lucide-react"
+import { useIsClient } from "@/lib/use-is-client"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
+  const isMounted = useIsClient()
   const router = useRouter()
-
-  // Handle hydration
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const { data, error } = await signIn.email({
-        email,
-        password,
-      })
-      if (error) {
-        console.error("Sign in error:", error)
-        throw error
-      }
-      toast.success("Signed in successfully!")
+      const { error } = await signIn.email({ email, password })
+      if (error) throw error
+      toast.success("Welcome back.")
       router.push("/dashboard")
-    } catch (error: any) {
-      console.error("Auth error:", error)
-      toast.error(error.message || "An error occurred")
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Couldn’t sign in. Check the address and try again."
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -53,232 +39,94 @@ export default function LoginPage() {
   const handleSocialLogin = async (provider: "google" | "github") => {
     setIsLoading(true)
     try {
-      const { data, error } = await signIn.social({
-        provider,
-        callbackURL: "/dashboard",
-      })
-      if (error) {
-        console.error(`${provider} login error:`, error)
-        throw error
-      }
-      // Success - user will be redirected automatically
-      toast.success(`Signed in with ${provider} successfully!`)
-    } catch (error: any) {
-      console.error(`${provider} auth error:`, error)
-      const errorMessage = error.message || `Failed to sign in with ${provider}. Please try again.`
-      toast.error(errorMessage)
+      const { error } = await signIn.social({ provider, callbackURL: "/dashboard" })
+      if (error) throw error
+    } catch (error) {
+      const message = error instanceof Error ? error.message : `Couldn’t sign in with ${provider}.`
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Get enabled OAuth providers (only after mounting to prevent hydration mismatch)
   const oauthProviders = isMounted ? getEnabledOAuthProviders() : []
   const hasOAuthProviders = isMounted && oauthProviders.length > 0
 
   return (
-    <div className="min-h-screen bg-background">
-      <PublicNavigation />
-
-      {/* Hero Section */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--blue)]/8 via-[var(--mauve)]/8 to-[var(--peach)]/8"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9InZhcig--bWF1dmUpIiBmaWxsLW9wYWNpdHk9IjAuMDgiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-60"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-background/20"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-[var(--blue)]/15 to-[var(--mauve)]/15 rounded-3xl mb-8 group hover:scale-110 transition-all duration-500 shadow-lg shadow-[var(--blue)]/10">
-              <LogIn className="h-12 w-12 text-[var(--blue)] group-hover:rotate-12 transition-transform duration-500" />
-            </div>
-            <h1 className="text-6xl lg:text-8xl font-light text-foreground mb-8 group">
-              <span className="bg-gradient-to-r from-[var(--blue)] via-[var(--mauve)] to-[var(--peach)] bg-clip-text text-transparent transition-all duration-700 drop-shadow-sm">
-                Sign in to Vibe Voicer
-              </span>
-            </h1>
-            <p className="text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Access your dashboard and continue growing your business with professional invoice management.
-            </p>
+    <AuthShell
+      overline="Welcome back"
+      heading={
+        <>
+          Sign <em className="italic">in</em>.
+        </>
+      }
+      side={{
+        quote: "Stopped using three apps for one job. Final form.",
+        caption: "— Mira Q., brand designer · Brooklyn",
+      }}
+    >
+      {hasOAuthProviders && (
+        <>
+          <div className="flex flex-col gap-2 mb-6">
+            {oauthProviders.map((provider) => (
+              <Button
+                key={provider.id}
+                type="button"
+                variant="secondary"
+                size="lg"
+                onClick={() => handleSocialLogin(provider.id as "google" | "github")}
+                disabled={isLoading}
+                className="w-full justify-center"
+              >
+                Continue with {provider.name}
+              </Button>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Login Form Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto">
-            <Card className="border-l-4 border-l-[var(--blue)] shadow-lg">
-              <CardHeader className="space-y-1 text-center">
-                <div className="p-3 rounded-lg bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-[var(--blue)]" />
-                </div>
-                <CardTitle className="text-2xl font-bold">
-                  Sign in to your account
-                </CardTitle>
-                <CardDescription>
-                  Enter your credentials to access your dashboard
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                      Email Address
-                    </Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="m@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="pl-10 h-12 border-2 border-border hover:border-[var(--blue)]/50 focus:border-[var(--blue)] focus:ring-2 focus:ring-[var(--blue)]/20 transition-all duration-200 text-base"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-foreground">
-                      Password
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="pl-10 h-12 border-2 border-border hover:border-[var(--blue)]/50 focus:border-[var(--blue)] focus:ring-2 focus:ring-[var(--blue)]/20 transition-all duration-200 text-base"
-                      />
-                    </div>
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 bg-gradient-to-r from-[var(--blue)] to-[var(--blue)]/90 hover:from-[var(--blue)]/90 hover:to-[var(--blue)]/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Signing in...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <span>Sign in</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    )}
-                  </Button>
-                </form>
-
-                <div className="text-center text-sm mt-4">
-                  <Link 
-                    href="/forgot-password" 
-                    className="text-[var(--blue)] hover:text-[var(--blue)]/80 font-medium"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-
-                {hasOAuthProviders && (
-                  <>
-                    <div className="relative my-6">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-border" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-3 text-muted-foreground">Or continue with</span>
-                      </div>
-                    </div>
-
-                    <div className={`grid gap-3 ${oauthProviders.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                      {oauthProviders.map((provider) => (
-                        <Button
-                          key={provider.id}
-                          variant="outline"
-                          onClick={() => handleSocialLogin(provider.id)}
-                          disabled={isLoading}
-                          className={`h-12 border-2 border-border transition-all duration-300 shadow-sm hover:shadow-md ${
-                            provider.id === 'google' 
-                              ? 'hover:border-[var(--red)]/50 hover:text-[var(--red)] hover:bg-gradient-to-r hover:from-[var(--red)]/10 hover:to-[var(--red)]/5'
-                              : 'hover:border-[var(--mauve)]/50 hover:text-[var(--mauve)] hover:bg-gradient-to-r hover:from-[var(--mauve)]/10 hover:to-[var(--mauve)]/5'
-                          }`}
-                        >
-                          {provider.name}
-                        </Button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                <div className="text-center text-sm mt-6">
-                  <span className="text-muted-foreground">Don't have an account? </span>
-                  <Link 
-                    href="/register" 
-                    className="text-[var(--blue)] hover:text-[var(--blue)]/80 font-medium"
-                  >
-                    Sign up for free
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="relative my-6 text-center">
+            <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--border)]" />
+            <span className="relative inline-block bg-[var(--background)] px-3 text-[11px] uppercase tracking-[0.1em] text-[var(--fg-muted)]">
+              or
+            </span>
           </div>
-        </div>
-      </section>
+        </>
+      )}
 
-      {/* Feature Highlights */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-foreground mb-4">
-                Why choose Vibe Voicer?
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Professional invoice management made simple
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--blue)]/10 w-fit mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-[var(--blue)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Create Invoices</h3>
-                <p className="text-muted-foreground text-sm">Professional templates and easy customization</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--green)]/10 w-fit mx-auto mb-4">
-                  <Users className="h-8 w-8 text-[var(--green)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Manage Clients</h3>
-                <p className="text-muted-foreground text-sm">Keep track of all your client information</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--peach)]/10 w-fit mx-auto mb-4">
-                  <DollarSign className="h-8 w-8 text-[var(--peach)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Track Payments</h3>
-                <p className="text-muted-foreground text-sm">Monitor invoice status and revenue</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="p-4 rounded-xl bg-[var(--mauve)]/10 w-fit mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-[var(--mauve)]" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Streamline Workflow</h3>
-                <p className="text-muted-foreground text-sm">Automate your invoicing process</p>
-              </div>
-            </div>
-          </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@studio.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+          />
         </div>
-      </section>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+        </div>
+        <Button type="submit" size="lg" disabled={isLoading} className="w-full justify-center mt-3">
+          {isLoading ? "Signing in…" : "Sign in →"}
+        </Button>
+      </form>
 
-      <Footer />
-    </div>
+      <div className="mt-7 text-[12px] text-[var(--fg-muted)]">
+        No account?{" "}
+        <Link href="/register" className="text-foreground hover:underline">
+          Make one — free.
+        </Link>
+      </div>
+    </AuthShell>
   )
 }

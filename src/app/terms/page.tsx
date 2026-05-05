@@ -1,45 +1,47 @@
+import { PublicNavigation } from "@/components/public-navigation"
+import { Footer } from "@/components/footer"
+
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
-        
-        <div className="prose prose-lg max-w-none">
-          <p className="text-muted-foreground mb-6">
-            Last updated: {new Date().toLocaleDateString()}
-          </p>
-          
-          <h2 className="text-2xl font-semibold mb-4">Acceptance of Terms</h2>
-          <p className="mb-4">
-            By accessing and using Vibe Voicer, you accept and agree to be bound by the terms 
-            and provision of this agreement.
-          </p>
-          
-          <h2 className="text-2xl font-semibold mb-4">Use License</h2>
-          <p className="mb-4">
-            Permission is granted to temporarily use Vibe Voicer for personal, non-commercial 
-            transitory viewing only. This is the grant of a license, not a transfer of title.
-          </p>
-          
-          <h2 className="text-2xl font-semibold mb-4">Service Availability</h2>
-          <p className="mb-4">
-            We strive to maintain high service availability, but we do not guarantee that our 
-            service will be uninterrupted or error-free.
-          </p>
-          
-          <h2 className="text-2xl font-semibold mb-4">User Responsibilities</h2>
-          <p className="mb-4">
-            You are responsible for maintaining the confidentiality of your account and password 
-            and for all activities that occur under your account.
-          </p>
-          
-          <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
-          <p className="mb-4">
-            If you have any questions about these Terms of Service, please contact us at 
-            legal@vibevoicer.com
-          </p>
+    <div className="min-h-screen bg-background">
+      <PublicNavigation />
+      <main className="mx-auto max-w-[760px] px-12 py-20">
+        <div className="t-overline">Terms</div>
+        <h1 className="font-[var(--font-display)] text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 mb-8">
+          The fine <em className="italic">print</em>.
+        </h1>
+        <div className="text-[12px] text-[var(--fg-muted)] mb-10">
+          Last updated {new Date().toLocaleDateString("en-US", { dateStyle: "long" })}
         </div>
-      </div>
+
+        <div className="flex flex-col gap-8 text-[15px] leading-[1.7]">
+          <section>
+            <h2 className="font-[var(--font-display)] text-[28px] leading-[1.2] mb-3">Using Vibe Voicer</h2>
+            <p className="text-[var(--fg-muted)]">
+              Use it for legitimate invoicing — yours or your clients&rsquo;. Don&rsquo;t use it to scam, spam, or impersonate anyone. We can suspend accounts that do.
+            </p>
+          </section>
+          <section>
+            <h2 className="font-[var(--font-display)] text-[28px] leading-[1.2] mb-3">Your account</h2>
+            <p className="text-[var(--fg-muted)]">
+              You&rsquo;re responsible for keeping your credentials safe and for what happens under your account. Don&rsquo;t share your password.
+            </p>
+          </section>
+          <section>
+            <h2 className="font-[var(--font-display)] text-[28px] leading-[1.2] mb-3">Service availability</h2>
+            <p className="text-[var(--fg-muted)]">
+              We aim for the best uptime we can. We don&rsquo;t promise zero downtime — nobody honestly can. We&rsquo;ll be straight with you when something breaks.
+            </p>
+          </section>
+          <section>
+            <h2 className="font-[var(--font-display)] text-[28px] leading-[1.2] mb-3">Contact</h2>
+            <p className="text-[var(--fg-muted)]">
+              <a className="text-foreground underline underline-offset-4" href="mailto:legal@vibevoicer.com">legal@vibevoicer.com</a>
+            </p>
+          </section>
+        </div>
+      </main>
+      <Footer />
     </div>
   )
 }

@@ -1,8 +1,10 @@
 /**
  * OAuth Configuration Utilities
- * 
- * This file provides utilities to check OAuth provider configuration
- * and determine which providers should be shown in the UI.
+ *
+ * The client only knows a provider is wired up if its NEXT_PUBLIC_*_CLIENT_ID
+ * is set at build time. Server-side, Better Auth additionally requires the
+ * matching *_CLIENT_SECRET (see src/lib/auth.ts) — to surface a button that
+ * actually works locally, set both the public ID and the server secret.
  */
 
 export interface OAuthProvider {
@@ -12,51 +14,37 @@ export interface OAuthProvider {
   icon?: string
 }
 
-/**
- * Check if OAuth providers are configured based on environment variables
- * This is a client-side check that can be used in components
- */
 export function getOAuthProviders(): OAuthProvider[] {
   const providers: OAuthProvider[] = [
     {
       id: 'google',
       name: 'Google',
-      enabled: typeof window !== 'undefined' && 
-        (!!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 
-         process.env.NODE_ENV === 'development'),
-      icon: '🔍'
+      enabled:
+        typeof window !== 'undefined' &&
+        !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      icon: '🔍',
     },
     {
       id: 'github',
       name: 'GitHub',
-      enabled: typeof window !== 'undefined' && 
-        (!!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || 
-         process.env.NODE_ENV === 'development'),
-      icon: '🐙'
-    }
+      enabled:
+        typeof window !== 'undefined' &&
+        !!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+      icon: '🐙',
+    },
   ]
 
   return providers.filter(provider => provider.enabled)
 }
 
-
-/**
- * Get the enabled OAuth providers for display in UI
- */
 export function getEnabledOAuthProviders(): OAuthProvider[] {
-  return getOAuthProviders().filter(provider => provider.enabled)
+  return getOAuthProviders()
 }
 
-/**
- * Check if any OAuth providers are enabled
- */
 export function hasOAuthProviders(): boolean {
   return getEnabledOAuthProviders().length > 0
 }
 
-/**
- * Get OAuth provider by ID
- */
 export function getOAuthProvider(id: 'google' | 'github'): OAuthProvider | undefined {
   return getOAuthProviders().find(provider => provider.id === id)
 }

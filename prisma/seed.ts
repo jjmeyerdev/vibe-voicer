@@ -98,7 +98,7 @@ async function main() {
   // Create invoices
   const invoices = await Promise.all([
     prisma.invoice.upsert({
-      where: { invoiceNumber: "INV-001" },
+      where: { userId_invoiceNumber: { userId: user.id, invoiceNumber: "INV-001" } },
       update: {},
       create: {
         id: "invoice-1",
@@ -117,7 +117,7 @@ async function main() {
       },
     }),
     prisma.invoice.upsert({
-      where: { invoiceNumber: "INV-002" },
+      where: { userId_invoiceNumber: { userId: user.id, invoiceNumber: "INV-002" } },
       update: {},
       create: {
         id: "invoice-2",
@@ -136,7 +136,7 @@ async function main() {
       },
     }),
     prisma.invoice.upsert({
-      where: { invoiceNumber: "INV-003" },
+      where: { userId_invoiceNumber: { userId: user.id, invoiceNumber: "INV-003" } },
       update: {},
       create: {
         id: "invoice-3",
