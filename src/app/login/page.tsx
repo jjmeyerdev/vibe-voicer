@@ -115,11 +115,6 @@ export default function LoginPage() {
             required
             autoComplete="current-password"
           />
-          <div className="text-[11px] text-[var(--fg-muted)] mt-0.5">
-            <Link href="/forgot-password" className="hover:text-foreground transition-colors">
-              Forgot it?
-            </Link>
-          </div>
         </div>
         <Button type="submit" size="lg" disabled={isLoading} className="w-full justify-center mt-3">
           {isLoading ? "Signing in…" : "Sign in →"}

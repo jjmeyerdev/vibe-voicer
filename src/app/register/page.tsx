@@ -36,8 +36,8 @@ export default function RegisterPage() {
           "Couldn’t make the account. Try again, or check the address."
         throw new Error(message)
       }
-      toast.success("Account ready. Check your email.")
-      router.push(`/check-email?email=${encodeURIComponent(email)}`)
+      toast.success("Account ready. Welcome.")
+      router.push("/dashboard")
     } catch (error) {
       const message = error instanceof Error ? error.message : "Something went sideways."
       toast.error(message)
