@@ -5,26 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,color,border-color,transform] duration-[120ms] ease-[cubic-bezier(0.25,1,0.5,1)] active:scale-[0.98] active:duration-[80ms] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-2",
   {
     variants: {
       variant: {
-        default: "bg-[var(--green)] hover:bg-[var(--green)]/90 text-white shadow-lg hover:shadow-xl",
-        destructive:
-          "bg-[var(--red)] hover:bg-[var(--red)]/90 text-white shadow-lg hover:shadow-xl focus-visible:ring-[var(--red)]/20 dark:focus-visible:ring-[var(--red)]/40",
-        outline:
-          "border bg-background shadow-xs hover:bg-muted/50",
+        default:
+          "bg-[var(--citrus)] text-[var(--ink-900)] border border-[var(--ink-900)] font-semibold hover:bg-[var(--citrus-hover)] dark:hover:bg-[#F2FF6E]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-[var(--bg-elevated)] text-foreground border border-[var(--border-strong)] hover:bg-[var(--bg-sunken)]",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-transparent text-foreground border border-transparent hover:bg-[var(--bg-sunken)]",
+        outline:
+          "bg-transparent text-foreground border border-[var(--ink-900)] hover:bg-[var(--bg-sunken)] dark:border-[var(--foreground)]",
+        destructive:
+          "bg-transparent text-[#94203A] border border-[#C8325040] hover:bg-[var(--status-overdue-tint)] dark:text-[#F09BA9] dark:border-[#F09BA940]",
+        link: "text-foreground underline-offset-4 hover:underline border-0 px-0 h-auto",
       },
       size: {
-        default: "h-12 px-8 text-base font-medium has-[>svg]:px-6",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 text-sm",
-        lg: "h-14 px-8 text-lg font-medium has-[>svg]:px-6",
-        icon: "size-9",
+        default: "h-9 px-4 text-[13px] rounded-[8px] gap-2",
+        sm: "h-7 px-2.5 text-[12px] rounded-[6px] gap-1.5",
+        lg: "h-11 px-5 text-[15px] rounded-[10px] gap-2",
+        icon: "size-8 rounded-[8px]",
       },
     },
     defaultVariants: {

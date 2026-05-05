@@ -1,24 +1,20 @@
 "use client"
 
 import { ProtectedLayout } from "@/components/protected-layout"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Separator } from "@/components/ui/separator"
-import { Edit, ArrowLeft, Download, Send, Eye, Copy, FileText, Building2, Mail, Phone, MapPin, DollarSign, Calendar, BarChart3, Settings } from "lucide-react"
+import { Edit, Download, Send, Eye, Copy, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
-import { Footer } from "@/components/footer"
 import { formatCurrency, formatQuantity } from "@/lib/utils"
+import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
 
-interface Invoice {
+type Invoice = {
   id: string
   invoiceNumber: string
   publicSlug: string
-  status: string
+  status: InvoiceStatus
   issueDate: string
   dueDate: string
   client: {
@@ -46,53 +42,76 @@ interface Invoice {
   createdAt: string
 }
 
+type TimelineStep = {
+  label: string
+  time: string
+  state: "created" | "sent" | "viewed" | "paid"
+  pending?: boolean
+}
+
+function buildTimeline(invoice: Invoice): TimelineStep[] {
+  const created: TimelineStep = {
+    label: "Invoice created",
+    time: new Date(invoice.createdAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }),
+    state: "created",
+  }
+  const sent: TimelineStep = {
+    label: "Sent to client",
+    time: invoice.status === "DRAFT" ? "—" : new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" }),
+    state: "sent",
+    pending: invoice.status === "DRAFT",
+  }
+  const viewed: TimelineStep = {
+    label: "Client opened it",
+    time: invoice.status === "PAID" || invoice.status === "VIEWED" || invoice.status === "OVERDUE" ? "Sometime after that." : "Not yet.",
+    state: "viewed",
+    pending: invoice.status === "DRAFT" || invoice.status === "SENT" || invoice.status === "PENDING",
+  }
+  const paid: TimelineStep = {
+    label: "Marked as paid",
+    time: invoice.status === "PAID" ? "Done." : "Pending.",
+    state: "paid",
+    pending: invoice.status !== "PAID",
+  }
+  return [created, sent, viewed, paid]
+}
+
 export default function InvoiceDetailPage() {
   const params = useParams()
   const invoiceId = params.id as string
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Fetch invoice from API
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/invoices/${invoiceId}`, {
-          credentials: "include"
-        })
-        if (!response.ok) {
-          throw new Error("Failed to fetch invoice")
-        }
-        const data = await response.json()
+        const response = await fetch(`/api/invoices/${invoiceId}`, { credentials: "include" })
+        if (!response.ok) throw new Error("fetch failed")
+        const data = (await response.json()) as Invoice
         setInvoice(data)
       } catch (error) {
         console.error("Error fetching invoice:", error)
-        toast.error("Failed to load invoice")
+        toast.error("Couldn’t load the invoice.")
       } finally {
         setLoading(false)
       }
     }
-
-    if (invoiceId) {
-      fetchInvoice()
-    }
+    if (invoiceId) fetchInvoice()
   }, [invoiceId])
 
   const copyPublicLink = () => {
     if (!invoice) return
-    const publicUrl = `${window.location.origin}/i/${invoice.publicSlug}`
-    navigator.clipboard.writeText(publicUrl)
-    toast.success("Public link copied to clipboard")
+    const url = `${window.location.origin}/i/${invoice.publicSlug}`
+    navigator.clipboard.writeText(url)
+    toast.success("Public link copied.")
   }
 
   if (loading) {
     return (
       <ProtectedLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p>Loading invoice...</p>
-          </div>
+          <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
         </div>
       </ProtectedLayout>
     )
@@ -101,292 +120,188 @@ export default function InvoiceDetailPage() {
   if (!invoice) {
     return (
       <ProtectedLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Invoice not found</h1>
-            <p className="text-muted-foreground mb-4">The invoice you're looking for doesn't exist.</p>
-            <Button asChild>
-              <Link href="/invoices">Back to Invoices</Link>
-            </Button>
-          </div>
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
+          <div className="font-[var(--font-display)] italic text-[40px]">Not here.</div>
+          <p className="text-[var(--fg-muted)]">That invoice doesn’t exist or was deleted.</p>
+          <Button asChild>
+            <Link href="/invoices">← Back to invoices</Link>
+          </Button>
         </div>
       </ProtectedLayout>
     )
   }
 
-  const getStatusVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "paid":
-        return "default"
-      case "pending":
-        return "secondary"
-      case "overdue":
-        return "destructive"
-      case "draft":
-        return "outline"
-      default:
-        return "secondary"
-    }
-  }
+  const timeline = buildTimeline(invoice)
 
   return (
-    <ProtectedLayout>
-      {/* Hero Section */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--blue)]/8 via-[var(--mauve)]/8 to-[var(--peach)]/8"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9InZhcig--bWF1dmUpIiBmaWxsLW9wYWNpdHk9IjAuMDgiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-60"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-background/20"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-[var(--blue)]/15 to-[var(--mauve)]/15 rounded-3xl mb-8 group hover:scale-110 transition-all duration-500 shadow-lg shadow-[var(--blue)]/10">
-              <FileText className="h-12 w-12 text-[var(--blue)] group-hover:rotate-12 transition-transform duration-500" />
-            </div>
-            <h1 className="text-6xl lg:text-8xl font-light text-foreground mb-8 group">
-              <span className="bg-gradient-to-r from-[var(--blue)] via-[var(--mauve)] to-[var(--peach)] bg-clip-text text-transparent transition-all duration-700 drop-shadow-sm">
-                {invoice.invoiceNumber}
-              </span>
-            </h1>
-            <p className="text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Invoice details and management
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <div className="space-y-8">
-        {/* Back Button and Actions */}
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="lg" asChild className="hover:bg-gradient-to-r hover:from-[var(--blue)]/10 hover:to-[var(--mauve)]/10 transition-all duration-300 shadow-sm hover:shadow-md">
+    <ProtectedLayout
+      title={invoice.invoiceNumber}
+      subtitle={`${invoice.client.name} · ${formatCurrency(invoice.total)}`}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <Button asChild variant="ghost" size="sm">
             <Link href="/invoices">
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Invoices
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back to invoices
             </Link>
           </Button>
-          <div className="flex space-x-3">
-            <Badge variant={getStatusVariant(invoice.status)} className="text-sm font-semibold px-3 py-1 rounded-full shadow-sm">
-              {invoice.status}
-            </Badge>
-            <Button variant="outline" size="lg" asChild className="h-12 px-6 border-2 border-border hover:border-[var(--blue)]/50 hover:text-[var(--blue)] hover:bg-gradient-to-r hover:from-[var(--blue)]/10 hover:to-[var(--blue)]/5 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div className="flex items-center gap-2">
+            <StatusBadge status={invoice.status} />
+            <Button variant="secondary" size="default" asChild>
               <Link href={`/invoices/${invoiceId}/edit`}>
-                <Edit className="h-5 w-5 mr-2" />
+                <Edit className="h-3.5 w-3.5" />
                 Edit
               </Link>
             </Button>
-            <Button variant="outline" size="lg" onClick={copyPublicLink} className="h-12 px-6 border-2 border-border hover:border-[var(--mauve)]/50 hover:text-[var(--mauve)] hover:bg-gradient-to-r hover:from-[var(--mauve)]/10 hover:to-[var(--mauve)]/5 transition-all duration-300 shadow-sm hover:shadow-md">
-              <Copy className="h-5 w-5 mr-2" />
-              Copy Link
+            <Button variant="secondary" size="default" onClick={copyPublicLink}>
+              <Copy className="h-3.5 w-3.5" />
+              Copy link
             </Button>
-            <Button variant="outline" size="lg" asChild className="h-12 px-6 border-2 border-border hover:border-[var(--peach)]/50 hover:text-[var(--peach)] hover:bg-gradient-to-r hover:from-[var(--peach)]/10 hover:to-[var(--peach)]/5 transition-all duration-300 shadow-sm hover:shadow-md">
+            <Button variant="secondary" size="default" asChild>
               <Link href={`/i/${invoice.publicSlug}`} target="_blank">
-                <Eye className="h-5 w-5 mr-2" />
+                <Eye className="h-3.5 w-3.5" />
                 Preview
               </Link>
             </Button>
-            <Button size="lg" asChild className="h-12 px-6 bg-gradient-to-r from-[var(--blue)] to-[var(--blue)]/90 hover:from-[var(--blue)]/90 hover:to-[var(--blue)]/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+            <Button size="default" asChild>
               <Link href={`/api/invoices/${invoiceId}/pdf`}>
-                <Download className="h-5 w-5 mr-2" />
+                <Download className="h-3.5 w-3.5" />
                 Download PDF
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="hover:shadow-xl hover:shadow-[var(--green)]/10 transition-all duration-300 border-l-4 border-l-[var(--green)] bg-gradient-to-br from-[var(--green)]/5 to-transparent hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--green)]/15 to-[var(--green)]/5 shadow-lg shadow-[var(--green)]/10">
-                  <DollarSign className="h-7 w-7 text-[var(--green)]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Amount</p>
-                  <p className="text-2xl font-bold text-foreground">{formatCurrency(invoice.total)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-xl hover:shadow-[var(--blue)]/10 transition-all duration-300 border-l-4 border-l-[var(--blue)] bg-gradient-to-br from-[var(--blue)]/5 to-transparent hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--blue)]/15 to-[var(--blue)]/5 shadow-lg shadow-[var(--blue)]/10">
-                  <Calendar className="h-7 w-7 text-[var(--blue)]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Issue Date</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {new Date(invoice.issueDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-xl hover:shadow-[var(--mauve)]/10 transition-all duration-300 border-l-4 border-l-[var(--mauve)] bg-gradient-to-br from-[var(--mauve)]/5 to-transparent hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--mauve)]/15 to-[var(--mauve)]/5 shadow-lg shadow-[var(--mauve)]/10">
-                  <Calendar className="h-7 w-7 text-[var(--mauve)]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Due Date</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {new Date(invoice.dueDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-xl hover:shadow-[var(--peach)]/10 transition-all duration-300 border-l-4 border-l-[var(--peach)] bg-gradient-to-br from-[var(--peach)]/5 to-transparent hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--peach)]/15 to-[var(--peach)]/5 shadow-lg shadow-[var(--peach)]/10">
-                  <BarChart3 className="h-7 w-7 text-[var(--peach)]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Items</p>
-                  <p className="text-2xl font-bold text-foreground">{invoice.items.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Invoice Details */}
-          <Card className="lg:col-span-2 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-[var(--blue)]/5 to-transparent">
-            <CardHeader className="pb-8">
-              <div className="flex items-center space-x-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--blue)]/15 to-[var(--blue)]/5 shadow-lg shadow-[var(--blue)]/10">
-                  <FileText className="h-6 w-6 text-[var(--blue)]" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl font-bold">Invoice Details</CardTitle>
-                  <CardDescription className="text-base">Complete invoice information</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Client Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Bill To</h3>
-                <div className="text-base text-muted-foreground space-y-2">
-                  <p className="font-semibold text-foreground">{invoice.client.name}</p>
-                  <p>{invoice.client.email}</p>
-                  <p>{invoice.client.phone}</p>
-                  <div className="mt-3 space-y-1">
-                    <p>{invoice.client.address}</p>
-                    <p>{`${invoice.client.city}, ${invoice.client.state} ${invoice.client.zipCode}`}</p>
-                    <p>{invoice.client.country}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-3.5 items-start">
+          {/* Timeline */}
+          <aside className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+            <div className="t-overline">Timeline</div>
+            <ul className="mt-3 list-none p-0 m-0">
+              {timeline.map((step, idx) => (
+                <li key={idx} className="grid grid-cols-[24px_1fr] gap-2.5 pb-4 relative">
+                  <div className="relative">
+                    {idx !== timeline.length - 1 && (
+                      <span className="absolute left-[11px] top-2 -bottom-2.5 w-px bg-[var(--border-strong)]" />
+                    )}
+                    <span
+                      className={
+                        "block w-2.5 h-2.5 rounded-full mx-auto mt-1.5 " +
+                        (step.pending
+                          ? "bg-transparent border border-dashed border-[var(--fg-subtle)]"
+                          : step.state === "paid"
+                          ? "bg-[var(--status-paid-fg)]"
+                          : step.state === "viewed"
+                          ? "bg-[var(--status-viewed-fg)]"
+                          : step.state === "sent"
+                          ? "bg-[var(--status-sent-fg)]"
+                          : "bg-[var(--status-draft-fg)]")
+                      }
+                    />
                   </div>
-                </div>
-              </div>
-
-              <Separator className="my-6" />
-
-              {/* Invoice Items */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-6">Items</h3>
-                <div className="border rounded-lg overflow-hidden">
-                  <Table>
-                    <TableHeader className="bg-gradient-to-r from-[var(--blue)]/10 to-[var(--blue)]/5 border-b-2 border-[var(--blue)]/20">
-                      <TableRow>
-                        <TableHead className="font-bold text-foreground py-4">Description</TableHead>
-                        <TableHead className="w-24 text-right font-bold text-foreground py-4">Qty</TableHead>
-                        <TableHead className="w-32 text-right font-bold text-foreground py-4">Unit Price</TableHead>
-                        <TableHead className="w-32 text-right font-bold text-foreground py-4">Total</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {invoice.items.map((item) => (
-                        <TableRow key={item.id} className="hover:bg-gradient-to-r hover:from-[var(--blue)]/5 hover:to-transparent transition-all duration-300 group">
-                          <TableCell className="font-semibold py-4">{item.description}</TableCell>
-                          <TableCell className="text-right py-4">{formatQuantity(item.quantity)}</TableCell>
-                          <TableCell className="text-right py-4">{formatCurrency(item.unitPrice)}</TableCell>
-                          <TableCell className="text-right py-4 font-bold">{formatCurrency(item.total)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-
-              {/* Totals */}
-              <div className="space-y-4 bg-gradient-to-r from-[var(--green)]/5 to-[var(--green)]/10 p-6 rounded-xl">
-                <div className="flex justify-between text-base">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-base">
-                  <span className="text-muted-foreground">Tax ({invoice.taxRate}%)</span>
-                  <span className="font-semibold">{formatCurrency(invoice.taxAmount)}</span>
-                </div>
-                <Separator className="my-4" />
-                <div className="flex justify-between text-xl">
-                  <span className="font-bold text-foreground">Total</span>
-                  <span className="font-bold text-2xl text-[var(--green)]">{formatCurrency(invoice.total)}</span>
-                </div>
-              </div>
-
-              {/* Notes */}
-              {invoice.notes && (
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Notes</h3>
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <p className="text-base text-muted-foreground">{invoice.notes}</p>
+                  <div className={step.pending ? "opacity-55" : ""}>
+                    <div className="text-[13px] leading-[1.4]">{step.label}</div>
+                    <div className="text-[11px] text-[var(--fg-muted)] mt-0.5">{step.time}</div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                </li>
+              ))}
+            </ul>
 
-          {/* Invoice Actions */}
-          <Card className="hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-[var(--mauve)]/5 to-transparent">
-            <CardHeader className="pb-8">
-              <div className="flex items-center space-x-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--mauve)]/15 to-[var(--mauve)]/5 shadow-lg shadow-[var(--mauve)]/10">
-                  <Settings className="h-6 w-6 text-[var(--mauve)]" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl font-bold">Actions</CardTitle>
-                  <CardDescription className="text-base">Manage this invoice</CardDescription>
+            <div className="t-overline mt-7">Quick actions</div>
+            <div className="flex flex-col gap-2 mt-3">
+              <Button variant="secondary" size="sm" className="justify-start">
+                <Send className="h-3.5 w-3.5" />
+                Send to client
+              </Button>
+              <Button variant="ghost" size="sm" className="justify-start" onClick={copyPublicLink}>
+                <Copy className="h-3.5 w-3.5" />
+                Copy public link
+              </Button>
+            </div>
+          </aside>
+
+          {/* Paper invoice */}
+          <section className="bg-[var(--background)] border border-[var(--border)] p-9">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-[var(--border)] mb-5">
+              <div>
+                <div className="t-overline">Invoice</div>
+                <div className="font-mono tabular-nums text-[24px] mt-1.5">{invoice.invoiceNumber}</div>
+                <div className="text-[12px] text-[var(--fg-muted)] mt-0.5 leading-[1.5]">
+                  Issued {new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                  <br />
+                  Due {new Date(invoice.dueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button asChild className="w-full h-12 justify-start bg-gradient-to-r from-[var(--blue)] to-[var(--blue)]/90 hover:from-[var(--blue)]/90 hover:to-[var(--blue)]/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-                <Link href={`/invoices/${invoiceId}/edit`}>
-                  <Edit className="mr-3 h-5 w-5" />
-                  Edit Invoice
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full h-12 justify-start border-2 border-border hover:border-[var(--green)]/50 hover:text-[var(--green)] hover:bg-gradient-to-r hover:from-[var(--green)]/10 hover:to-[var(--green)]/5 transition-all duration-300 shadow-sm hover:shadow-md">
-                <Send className="mr-3 h-5 w-5" />
-                Send Invoice
-              </Button>
-              <Button variant="outline" className="w-full h-12 justify-start border-2 border-border hover:border-[var(--mauve)]/50 hover:text-[var(--mauve)] hover:bg-gradient-to-r hover:from-[var(--mauve)]/10 hover:to-[var(--mauve)]/5 transition-all duration-300 shadow-sm hover:shadow-md" onClick={copyPublicLink}>
-                <Copy className="mr-3 h-5 w-5" />
-                Copy Public Link
-              </Button>
-              <Button variant="outline" className="w-full h-12 justify-start border-2 border-border hover:border-[var(--peach)]/50 hover:text-[var(--peach)] hover:bg-gradient-to-r hover:from-[var(--peach)]/10 hover:to-[var(--peach)]/5 transition-all duration-300 shadow-sm hover:shadow-md" asChild>
-                <Link href={`/i/${invoice.publicSlug}`} target="_blank">
-                  <Eye className="mr-3 h-5 w-5" />
-                  Preview Public Page
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full h-12 justify-start border-2 border-border hover:border-[var(--sky)]/50 hover:text-[var(--sky)] hover:bg-gradient-to-r hover:from-[var(--sky)]/10 hover:to-[var(--sky)]/5 transition-all duration-300 shadow-sm hover:shadow-md" asChild>
-                <Link href={`/api/invoices/${invoiceId}/pdf`}>
-                  <Download className="mr-3 h-5 w-5" />
-                  Download PDF
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+              <div>
+                <div className="t-overline">Bill to</div>
+                <div className="font-[var(--font-display)] text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
+                <div className="text-[12px] text-[var(--fg-muted)] mt-1 leading-[1.5]">
+                  {invoice.client.email}
+                  {invoice.client.phone && (
+                    <>
+                      <br />
+                      {invoice.client.phone}
+                    </>
+                  )}
+                  <br />
+                  {invoice.client.address}
+                  {(invoice.client.city || invoice.client.state) && (
+                    <>
+                      <br />
+                      {[invoice.client.city, invoice.client.state, invoice.client.zipCode].filter(Boolean).join(" ")}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
 
-      <div className="mt-16">
-        <Footer />
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left t-overline pb-2 border-b border-[var(--border)]">Description</th>
+                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[60px]">Qty</th>
+                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[120px]">Rate</th>
+                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[140px]">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items.map((item) => (
+                  <tr key={item.id} className="border-b border-[var(--border)]">
+                    <td className="py-3 text-[14px]">{item.description}</td>
+                    <td className="py-3 text-right font-mono tabular-nums text-[13px]">{formatQuantity(item.quantity)}</td>
+                    <td className="py-3 text-right font-mono tabular-nums text-[13px]">{formatCurrency(item.unitPrice)}</td>
+                    <td className="py-3 text-right font-mono tabular-nums text-[13px]">{formatCurrency(item.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="flex justify-end mt-5">
+              <div className="w-[280px] flex flex-col gap-1.5 text-[13px]">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="font-mono tabular-nums">{formatCurrency(invoice.subtotal)}</span>
+                </div>
+                {invoice.taxAmount > 0 && (
+                  <div className="flex justify-between text-[var(--fg-muted)]">
+                    <span>Tax ({invoice.taxRate}%)</span>
+                    <span className="font-mono tabular-nums">{formatCurrency(invoice.taxAmount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-[var(--ink-900)] dark:border-[var(--foreground)] mt-1.5 pt-2.5 text-[18px]">
+                  <span className="font-[var(--font-display)] italic text-[22px]">Total</span>
+                  <span className="font-mono tabular-nums">{formatCurrency(invoice.total)}</span>
+                </div>
+              </div>
+            </div>
+
+            {invoice.notes && (
+              <div className="mt-7 pt-5 border-t border-dashed border-[var(--border-strong)] text-[12px] text-[var(--fg-muted)] leading-[1.6]">
+                {invoice.notes}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </ProtectedLayout>
   )

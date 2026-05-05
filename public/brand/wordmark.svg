@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" width="320" height="64">
+  
+  <text x="0" y="46" class="word">Vibe</text>
+  <text x="100" y="46" class="word-italic">Voicer</text>
+  <circle cx="42" cy="14" r="5" class="dot"></circle>
+</svg>
