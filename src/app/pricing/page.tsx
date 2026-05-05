@@ -48,17 +48,17 @@ export default function PricingPage() {
       <PublicNavigation />
 
       <section className="px-12 py-20">
-        <div className="mx-auto max-w-[1100px] mb-10">
+        <div className="mx-auto max-w-275 mb-10">
           <div className="t-overline">Pricing</div>
-          <h1 className="font-display text-[64px] leading-[1.05] tracking-[-0.02em] mt-2">
+          <h1 className="font-(--font-display) text-[64px] leading-[1.05] tracking-[-0.02em] mt-2">
             Pay <em className="italic">monthly</em>. Cancel anytime.
           </h1>
-          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-[560px]">
+          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-140">
             One price, billed monthly. No annual contracts, no per-invoice fees, no upsells we hide in the footer.
           </p>
         </div>
 
-        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mx-auto max-w-275 grid grid-cols-1 md:grid-cols-3 gap-4">
           {tiers.map((t) => (
             <div
               key={t.name}
@@ -74,9 +74,9 @@ export default function PricingPage() {
                   Most picked
                 </div>
               )}
-              <div className="font-display italic text-[22px] leading-none">{t.name}</div>
+              <div className="font-(--font-display) italic text-[22px] leading-none">{t.name}</div>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-[56px] leading-none tracking-[-0.02em]">
+                <span className="font-(--font-display) text-[56px] leading-none tracking-[-0.02em]">
                   {t.price}
                 </span>
                 <span className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
@@ -113,7 +113,7 @@ export default function PricingPage() {
           ))}
         </div>
 
-        <div className="mx-auto max-w-[1100px] mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px] text-(--fg-muted)">
+        <div className="mx-auto max-w-275 mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px] text-(--fg-muted)">
           <div className="border-t border-border pt-4">
             <div className="t-overline mb-2">Refunds</div>
             <p>14-day money back. No forms, no questions, just email us.</p>

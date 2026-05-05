@@ -11,9 +11,9 @@ export default function AboutPage() {
       <PublicNavigation />
 
       <section className="px-12 py-20">
-        <div className="mx-auto max-w-[820px]">
+        <div className="mx-auto max-w-205">
           <div className="t-overline">About</div>
-          <h1 className="font-display text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 mb-8">
+          <h1 className="font-(--font-display) text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 mb-8">
             We just wanted to <em className="italic">get paid</em>.
           </h1>
 
@@ -32,15 +32,15 @@ export default function AboutPage() {
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="border-t border-border pt-4">
               <div className="t-overline mb-2">Built in</div>
-              <div className="font-display italic text-[24px]">Brooklyn</div>
+              <div className="font-(--font-display) italic text-[24px]">Brooklyn</div>
             </div>
             <div className="border-t border-border pt-4">
               <div className="t-overline mb-2">Year started</div>
-              <div className="font-display italic text-[24px]">2024</div>
+              <div className="font-(--font-display) italic text-[24px]">2024</div>
             </div>
             <div className="border-t border-border pt-4">
               <div className="t-overline mb-2">Team size</div>
-              <div className="font-display italic text-[24px]">Three</div>
+              <div className="font-(--font-display) italic text-[24px]">Three</div>
             </div>
           </div>
 

@@ -16,7 +16,7 @@ export function AuthShell({ side, overline, heading, children }: AuthShellProps)
       <aside className="hidden lg:flex flex-col justify-between p-12 border-r border-border bg-(--bg-sunken)">
         <Wordmark size="lg" />
         <div>
-          <div className="font-display italic text-[36px] leading-[1.2] text-foreground">
+          <div className="font-(--font-display) italic text-[36px] leading-[1.2] text-foreground">
             &ldquo;{side.quote}&rdquo;
           </div>
           {side.caption && (
@@ -36,9 +36,9 @@ export function AuthShell({ side, overline, heading, children }: AuthShellProps)
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center px-6 lg:px-12 py-10">
-          <div className="w-full max-w-[420px]">
+          <div className="w-full max-w-105">
             <div className="t-overline mb-3">{overline}</div>
-            <h1 className="font-display text-[64px] leading-[1.0] tracking-[-0.02em] mb-8 max-w-[400px]">
+            <h1 className="font-(--font-display) text-[64px] leading-none tracking-[-0.02em] mb-8 max-w-100">
               {heading}
             </h1>
             {children}

@@ -16,7 +16,7 @@ export function Mark({ size = 32, className }: MarkProps) {
       aria-hidden
     >
       <span
-        className="font-display italic text-citrus dark:text-ink-900 leading-none"
+        className="font-(--font-display) italic text-citrus dark:text-ink-900 leading-none"
         style={{ fontSize: size * 0.7 }}
       >
         V

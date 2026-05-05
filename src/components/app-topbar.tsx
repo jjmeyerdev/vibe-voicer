@@ -14,12 +14,12 @@ export function AppTopbar({ title, subtitle }: AppTopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-6 px-7 py-4 border-b border-border bg-background">
       <div className="flex flex-col gap-0.5 min-w-0">
-        <h1 className="font-display text-[28px] leading-[1.1] truncate">{title}</h1>
+        <h1 className="font-(--font-display) text-[28px] leading-[1.1] truncate">{title}</h1>
         {subtitle && <div className="text-[12px] text-(--fg-muted)">{subtitle}</div>}
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="hidden md:flex items-center gap-2 px-2.5 py-1.5 w-[320px] rounded-[8px] border border-border bg-(--bg-sunken) text-(--fg-muted)">
+        <div className="hidden md:flex items-center gap-2 px-2.5 py-1.5 w-80 rounded-[8px] border border-border bg-(--bg-sunken) text-(--fg-muted)">
           <Search className="h-3.5 w-3.5" />
           <input
             type="search"

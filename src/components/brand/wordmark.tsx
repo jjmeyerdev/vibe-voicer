@@ -17,7 +17,7 @@ export function Wordmark({ size = "md", className, showDot = true }: WordmarkPro
   const fontPx = SIZE_PX[size]
   return (
     <span
-      className={cn("inline-flex items-baseline leading-none font-display", className)}
+      className={cn("inline-flex items-baseline leading-none font-(--font-display)", className)}
       style={{ fontSize: fontPx }}
     >
       <span>Vibe</span>

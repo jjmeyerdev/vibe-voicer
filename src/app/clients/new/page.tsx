@@ -64,7 +64,7 @@ export default function NewClientPage() {
 
   return (
     <ProtectedLayout title="New client" subtitle="Who are you billing this time?">
-      <div className="flex flex-col gap-4 max-w-[820px]">
+      <div className="flex flex-col gap-4 max-w-205">
         <Button asChild variant="ghost" size="sm" className="self-start">
           <Link href="/clients">
             <ArrowLeft className="h-3.5 w-3.5" />

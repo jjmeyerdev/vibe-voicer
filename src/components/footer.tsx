@@ -13,7 +13,7 @@ const links = [
 export function Footer() {
   return (
     <footer className="border-t border-border px-12 py-8">
-      <div className="mx-auto max-w-[1280px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-[12px]">
+      <div className="mx-auto max-w-320 flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-[12px]">
         <div className="flex items-center gap-4">
           <Wordmark size="sm" />
           <span className="text-(--fg-muted)">© {new Date().getFullYear()} · Made for people who&rsquo;d rather be doing the work.</span>

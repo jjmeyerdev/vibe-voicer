@@ -92,7 +92,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative px-12 pt-20 pb-12">
-        <div className="mx-auto max-w-[1100px]">
+        <div className="mx-auto max-w-275">
           <div className="inline-flex items-center gap-2 text-[12px] text-(--fg-muted) px-3 py-1.5 border border-border rounded-full mb-7">
             <span
               aria-hidden
@@ -100,7 +100,7 @@ export default function Home() {
             />
             For freelancers who&rsquo;d rather be designing
           </div>
-          <h1 className="font-display leading-[1.0] tracking-[-0.02em] m-0 mb-7 max-w-[1000px]" style={{ fontSize: "clamp(56px, 9vw, 124px)" }}>
+          <h1 className="font-(--font-display) leading-none tracking-[-0.02em] m-0 mb-7 max-w-250" style={{ fontSize: "clamp(56px, 9vw, 124px)" }}>
             Get{" "}
             <em className="not-italic">
               <span className="italic">paid</span>
@@ -114,7 +114,7 @@ export default function Home() {
             <br />
             you mean it.
           </h1>
-          <p className="text-[20px] leading-[1.55] text-(--fg-muted) max-w-[640px] mb-8">
+          <p className="text-[20px] leading-[1.55] text-(--fg-muted) max-w-160 mb-8">
             Invoicing that doesn&rsquo;t feel like homework. Send a clean invoice, see when your client opens it, and quit chasing payments through three different apps.
           </p>
           <div className="flex flex-wrap gap-3 items-center mb-7">
@@ -133,13 +133,13 @@ export default function Home() {
             <span className="font-mono tabular-nums">No annual contracts</span>
           </div>
         </div>
-        <PerforatedEdge className="absolute left-0 right-0 bottom-[-1px]" />
+        <PerforatedEdge className="absolute left-0 right-0 -bottom-px" />
       </section>
 
       {/* Proof */}
       <section className="px-12 py-9 border-t border-b border-border">
-        <div className="mx-auto max-w-[1100px] flex flex-wrap items-center justify-between gap-9">
-          <div className="font-display italic text-[22px] text-(--fg-muted)">
+        <div className="mx-auto max-w-275 flex flex-wrap items-center justify-between gap-9">
+          <div className="font-(--font-display) italic text-[22px] text-(--fg-muted)">
             &ldquo;Stopped using three apps for one job. Final form.&rdquo;
           </div>
           <div className="flex gap-8">
@@ -149,7 +149,7 @@ export default function Home() {
               { num: "11k", lab: "Freelancers, no agencies" },
             ].map((s) => (
               <div key={s.lab}>
-                <div className="font-display text-[32px] leading-none">{s.num}</div>
+                <div className="font-(--font-display) text-[32px] leading-none">{s.num}</div>
                 <div className="t-overline mt-1">{s.lab}</div>
               </div>
             ))}
@@ -159,21 +159,21 @@ export default function Home() {
 
       {/* Features */}
       <section id="features" className="px-12 py-20 bg-(--bg-sunken)">
-        <div className="mx-auto max-w-[1100px] mb-9">
+        <div className="mx-auto max-w-275 mb-9">
           <div className="t-overline">What it does</div>
-          <h2 className="font-display text-[56px] leading-[1.05] mt-2 max-w-[720px]">
+          <h2 className="font-(--font-display) text-[56px] leading-[1.05] mt-2 max-w-180">
             The boring parts, <em className="italic">handled</em>.
           </h2>
         </div>
-        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mx-auto max-w-275 grid grid-cols-1 md:grid-cols-2 gap-4">
           {features.map((it) => (
             <div
               key={it.k}
               className="bg-(--bg-elevated) border border-border rounded-[16px] p-7 hover:border-(--border-strong) transition-colors"
             >
               <div className="font-mono text-[12px] text-(--fg-subtle) mb-4">{it.k}</div>
-              <div className="font-display text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
-              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-[420px]">{it.b}</div>
+              <div className="font-(--font-display) text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
+              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-105">{it.b}</div>
             </div>
           ))}
         </div>
@@ -181,13 +181,13 @@ export default function Home() {
 
       {/* Pricing */}
       <section id="pricing" className="px-12 py-20">
-        <div className="mx-auto max-w-[1100px] mb-10">
+        <div className="mx-auto max-w-275 mb-10">
           <div className="t-overline">Pricing</div>
-          <h2 className="font-display text-[52px] leading-[1.05] mt-2">
+          <h2 className="font-(--font-display) text-[52px] leading-[1.05] mt-2">
             Pay <em className="italic">monthly</em>. Cancel anytime.
           </h2>
         </div>
-        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mx-auto max-w-275 grid grid-cols-1 md:grid-cols-3 gap-4">
           {tiers.map((t) => (
             <div
               key={t.name}
@@ -203,9 +203,9 @@ export default function Home() {
                   Most picked
                 </div>
               )}
-              <div className="font-display italic text-[22px] leading-none">{t.name}</div>
+              <div className="font-(--font-display) italic text-[22px] leading-none">{t.name}</div>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-[56px] leading-none tracking-[-0.02em]">
+                <span className="font-(--font-display) text-[56px] leading-none tracking-[-0.02em]">
                   {t.price}
                 </span>
                 <span className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
