@@ -136,8 +136,8 @@ export default function InvoicesPage() {
                 className={cn(
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12px] font-medium transition-colors duration-[120ms] border border-transparent",
                   filter === f.k
-                    ? "bg-[var(--ink-900)] text-[var(--ink-50)] dark:bg-[var(--citrus)] dark:text-[var(--ink-900)]"
-                    : "text-[var(--fg-muted)] hover:bg-[var(--background)] hover:text-foreground"
+                    ? "bg-ink-900 text-ink-50 dark:bg-citrus dark:text-ink-900"
+                    : "text-(--fg-muted) hover:bg-background hover:text-foreground"
                 )}
               >
                 {f.label}
@@ -146,14 +146,14 @@ export default function InvoicesPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-[var(--border)] bg-[var(--background)] text-[var(--fg-muted)] w-[280px]">
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-[280px]">
               <Search className="h-3.5 w-3.5" />
               <input
                 type="search"
                 placeholder="Search by client or number"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="flex-1 bg-transparent border-0 outline-none text-[13px] text-foreground placeholder:text-[var(--fg-muted)]"
+                className="flex-1 bg-transparent border-0 outline-none text-[13px] text-foreground placeholder:text-(--fg-muted)"
               />
             </div>
             <Button asChild>
@@ -166,7 +166,7 @@ export default function InvoicesPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] overflow-hidden">
+        <div className="bg-background border border-border rounded-[12px] overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -182,14 +182,14 @@ export default function InvoicesPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10 text-[var(--fg-muted)]">
+                  <TableCell colSpan={7} className="text-center py-10 text-(--fg-muted)">
                     Loading…
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
-                    <div className="font-[var(--font-display)] italic text-[24px] mb-2">No invoices yet.</div>
+                    <div className="font-display italic text-[24px] mb-2">No invoices yet.</div>
                     <Button asChild>
                       <Link href="/invoices/new">Create your first invoice</Link>
                     </Button>
@@ -204,10 +204,10 @@ export default function InvoicesPage() {
                       </Link>
                     </TableCell>
                     <TableCell className="font-medium">{invoice.client.name}</TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">
+                    <TableCell className="text-(--fg-muted) text-[12px]">
                       {new Date(invoice.issueDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                     </TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">
+                    <TableCell className="text-(--fg-muted) text-[12px]">
                       {new Date(invoice.dueDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                     </TableCell>
                     <TableCell data-num="true">{formatCurrency(Number(invoice.total))}</TableCell>
@@ -225,7 +225,7 @@ export default function InvoicesPage() {
                           onClick={() => handleDelete(invoice.id)}
                           disabled={deletingId === invoice.id}
                           title="Delete"
-                          className="text-[var(--fg-muted)] hover:text-[var(--destructive)]"
+                          className="text-(--fg-muted) hover:text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>

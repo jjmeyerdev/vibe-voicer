@@ -72,7 +72,7 @@ export default function ClientDetailPage() {
     return (
       <ProtectedLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+          <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
     )
@@ -82,8 +82,8 @@ export default function ClientDetailPage() {
     return (
       <ProtectedLayout>
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-[var(--font-display)] italic text-[40px]">Not here.</div>
-          <p className="text-[var(--fg-muted)]">That client doesn’t exist or was deleted.</p>
+          <div className="font-display italic text-[40px]">Not here.</div>
+          <p className="text-(--fg-muted)">That client doesn’t exist or was deleted.</p>
           <Button asChild>
             <Link href="/clients">← Back to clients</Link>
           </Button>
@@ -111,16 +111,16 @@ export default function ClientDetailPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-3.5">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+          <div className="bg-background border border-border rounded-[12px] p-5">
             <div className="t-overline">Contact</div>
             <dl className="mt-3 grid grid-cols-[100px_1fr] gap-y-2 text-[13px]">
-              <dt className="text-[var(--fg-muted)]">Email</dt>
-              <dd>{client.email || <span className="text-[var(--fg-subtle)]">—</span>}</dd>
-              <dt className="text-[var(--fg-muted)]">Phone</dt>
-              <dd>{client.phone || <span className="text-[var(--fg-subtle)]">—</span>}</dd>
-              <dt className="text-[var(--fg-muted)]">Address</dt>
+              <dt className="text-(--fg-muted)">Email</dt>
+              <dd>{client.email || <span className="text-(--fg-subtle)">—</span>}</dd>
+              <dt className="text-(--fg-muted)">Phone</dt>
+              <dd>{client.phone || <span className="text-(--fg-subtle)">—</span>}</dd>
+              <dt className="text-(--fg-muted)">Address</dt>
               <dd className="leading-[1.5]">
-                {client.address || <span className="text-[var(--fg-subtle)]">—</span>}
+                {client.address || <span className="text-(--fg-subtle)">—</span>}
                 {(client.city || client.state) && (
                   <>
                     <br />
@@ -137,20 +137,20 @@ export default function ClientDetailPage() {
             </dl>
           </div>
 
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+          <div className="bg-background border border-border rounded-[12px] p-5">
             <div className="t-overline">Money</div>
             <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 text-[13px]">
-              <dt className="text-[var(--fg-muted)]">Invoiced</dt>
+              <dt className="text-(--fg-muted)">Invoiced</dt>
               <dd className="text-right font-mono tabular-nums">{formatCurrency(client.totalValue)}</dd>
-              <dt className="text-[var(--status-paid-fg)]">Paid</dt>
-              <dd className="text-right font-mono tabular-nums text-[var(--status-paid-fg)]">{formatCurrency(client.paidValue)}</dd>
-              <dt className="text-[var(--status-sent-fg)]">Pending</dt>
-              <dd className="text-right font-mono tabular-nums text-[var(--status-sent-fg)]">{formatCurrency(client.pendingValue)}</dd>
+              <dt className="text-(--status-paid-fg)">Paid</dt>
+              <dd className="text-right font-mono tabular-nums text-(--status-paid-fg)">{formatCurrency(client.paidValue)}</dd>
+              <dt className="text-(--status-sent-fg)">Pending</dt>
+              <dd className="text-right font-mono tabular-nums text-(--status-sent-fg)">{formatCurrency(client.pendingValue)}</dd>
             </dl>
           </div>
         </div>
 
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] overflow-hidden">
+        <div className="bg-background border border-border rounded-[12px] overflow-hidden">
           <div className="px-5 pt-5">
             <div className="t-overline">Invoice history</div>
           </div>
@@ -173,10 +173,10 @@ export default function ClientDetailPage() {
                         {invoice.invoiceNumber}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">
+                    <TableCell className="text-(--fg-muted) text-[12px]">
                       {new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
                     </TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">
+                    <TableCell className="text-(--fg-muted) text-[12px]">
                       {new Date(invoice.dueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
                     </TableCell>
                     <TableCell data-num="true">{formatCurrency(Number(invoice.total))}</TableCell>
@@ -188,7 +188,7 @@ export default function ClientDetailPage() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
-                    <div className="font-[var(--font-display)] italic text-[20px] mb-2">No invoices yet.</div>
+                    <div className="font-display italic text-[20px] mb-2">No invoices yet.</div>
                     <Button asChild>
                       <Link href="/invoices/new">Create the first one</Link>
                     </Button>

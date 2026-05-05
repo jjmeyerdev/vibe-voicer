@@ -149,9 +149,9 @@ export default function SettingsPage() {
           </TabsList>
 
           <TabsContent value="personal" className="mt-2">
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+            <div className="bg-background border border-border rounded-[12px] p-7">
               <div className="t-overline">Personal info</div>
-              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+              <p className="text-[12px] text-(--fg-muted) mt-0.5 mb-6">
                 Whose name should appear at the top of invoices?
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +175,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+              <div className="flex justify-end pt-6 mt-4 border-t border-border">
                 <Button onClick={handleSavePersonal} disabled={isSavingPersonal}>
                   {isSavingPersonal ? "Saving…" : "Save"}
                 </Button>
@@ -184,9 +184,9 @@ export default function SettingsPage() {
           </TabsContent>
 
           <TabsContent value="invoice" className="mt-2">
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+            <div className="bg-background border border-border rounded-[12px] p-7">
               <div className="t-overline">Invoice defaults</div>
-              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+              <p className="text-[12px] text-(--fg-muted) mt-0.5 mb-6">
                 What every new invoice starts with.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -248,7 +248,7 @@ export default function SettingsPage() {
                   onChange={(e) => setInvoice((s) => ({ ...s, paymentTerms: e.target.value }))}
                 />
               </div>
-              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+              <div className="flex justify-end pt-6 mt-4 border-t border-border">
                 <Button onClick={handleSaveInvoice} disabled={isSavingInvoice}>
                   {isSavingInvoice ? "Saving…" : "Save"}
                 </Button>
@@ -257,9 +257,9 @@ export default function SettingsPage() {
           </TabsContent>
 
           <TabsContent value="account" className="mt-2">
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+            <div className="bg-background border border-border rounded-[12px] p-7">
               <div className="t-overline">Change password</div>
-              <p className="text-[12px] text-[var(--fg-muted)] mt-0.5 mb-6">
+              <p className="text-[12px] text-(--fg-muted) mt-0.5 mb-6">
                 We&rsquo;ll sign you out of other sessions when you change it.
               </p>
               <div className="flex flex-col gap-4 max-w-[420px]">
@@ -300,7 +300,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end pt-6 mt-4 border-t border-[var(--border)]">
+              <div className="flex justify-end pt-6 mt-4 border-t border-border">
                 <Button onClick={handleChangePassword} disabled={isSavingAccount}>
                   {isSavingAccount ? "Updating…" : "Change password"}
                 </Button>

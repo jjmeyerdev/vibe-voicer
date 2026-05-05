@@ -120,11 +120,11 @@ export default function DashboardPage() {
 
       {/* Activity + side */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-3.5">
-        <section className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+        <section className="bg-background border border-border rounded-[12px] p-5">
           <header className="flex justify-between items-end mb-4">
             <div>
               <div className="t-overline">Activity</div>
-              <h3 className="font-[var(--font-display)] text-[22px] leading-[1.1] mt-1">What just happened</h3>
+              <h3 className="font-display text-[22px] leading-[1.1] mt-1">What just happened</h3>
             </div>
             <Button asChild variant="ghost" size="sm">
               <Link href="/invoices">View all →</Link>
@@ -136,24 +136,24 @@ export default function DashboardPage() {
               {recent.map((it) => (
                 <li
                   key={it.id}
-                  className="grid grid-cols-[80px_14px_1fr] gap-3 py-3 border-b border-[var(--border)] last:border-b-0 items-center"
+                  className="grid grid-cols-[80px_14px_1fr] gap-3 py-3 border-b border-border last:border-b-0 items-center"
                 >
-                  <div className="font-mono text-[11px] text-[var(--fg-muted)] tabular-nums">
+                  <div className="font-mono text-[11px] text-(--fg-muted) tabular-nums">
                     {it.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </div>
                   <div className={"w-2 h-2 rounded-full justify-self-center " + dotColor(it.status)} />
                   <div className="flex justify-between items-baseline gap-3 text-[13px]">
                     <div className="leading-[1.4]">
                       <span className="font-semibold">{it.client}</span>
-                      <span className="text-[var(--fg-muted)]"> · {labelFor(it.status)} </span>
+                      <span className="text-(--fg-muted)"> · {labelFor(it.status)} </span>
                       <Link
                         href={`/invoices/${it.id}`}
-                        className="text-foreground border-b border-dotted border-[var(--fg-subtle)] cursor-pointer"
+                        className="text-foreground border-b border-dotted border-(--fg-subtle) cursor-pointer"
                       >
                         {it.number}
                       </Link>
                     </div>
-                    <div className="text-[var(--fg-muted)] text-[12px] font-mono tabular-nums">
+                    <div className="text-(--fg-muted) text-[12px] font-mono tabular-nums">
                       {formatCurrency(it.total)}
                     </div>
                   </div>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
             </ul>
           ) : (
             <div className="py-12 text-center">
-              <div className="font-[var(--font-display)] italic text-[24px] mb-2">No invoices yet.</div>
+              <div className="font-display italic text-[24px] mb-2">No invoices yet.</div>
               <Button asChild size="default">
                 <Link href="/invoices/new">Create your first invoice</Link>
               </Button>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <aside className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+        <aside className="bg-background border border-border rounded-[12px] p-5">
           <div className="t-overline">Up next</div>
           <div className="flex flex-col gap-2 mt-3 mb-6">
             <ActionChip href="/invoices/new" label="New invoice" sub="Send your next one" citrus />
@@ -178,12 +178,12 @@ export default function DashboardPage() {
             <ActionChip href="/settings" label="Set up your branding" sub="Settings → Company" />
           </div>
 
-          <div className="bg-[var(--bg-sunken)] rounded-[12px] p-5 mt-2">
-            <div className="font-[var(--font-display)] italic text-[40px] leading-none text-[var(--fg-subtle)]">&ldquo;</div>
-            <div className="font-[var(--font-display)] italic text-[20px] leading-[1.3] mt-1.5 mb-3">
+          <div className="bg-(--bg-sunken) rounded-[12px] p-5 mt-2">
+            <div className="font-display italic text-[40px] leading-none text-(--fg-subtle)">&ldquo;</div>
+            <div className="font-display italic text-[20px] leading-[1.3] mt-1.5 mb-3">
               Thursdays. People pay on Thursdays.
             </div>
-            <div className="text-[11px] text-[var(--fg-muted)]">— from your last 90 days</div>
+            <div className="text-[11px] text-(--fg-muted)">— from your last 90 days</div>
           </div>
         </aside>
       </div>
@@ -207,15 +207,15 @@ function StatCard({
       className={
         "rounded-[12px] p-5 border " +
         (alert
-          ? "bg-[var(--status-overdue-tint)] border-[var(--status-overdue-fg)]/30"
-          : "bg-[var(--background)] border-[var(--border)]")
+          ? "bg-(--status-overdue-tint) border-(--status-overdue-fg)/30"
+          : "bg-background border-border")
       }
     >
       <div className="t-overline">{label}</div>
       <div className="font-mono tabular-nums text-[30px] tracking-[-0.01em] mt-1.5 mb-2">
         {formatCurrency(amount)}
       </div>
-      <div className="flex justify-between text-[11px] text-[var(--fg-muted)]">
+      <div className="flex justify-between text-[11px] text-(--fg-muted)">
         <span>{sub}</span>
       </div>
     </div>
@@ -239,19 +239,19 @@ function ActionChip({
       className={
         "grid grid-cols-[1fr_auto] items-center px-3.5 py-3 rounded-[10px] border transition-colors duration-[120ms] " +
         (citrus
-          ? "bg-[var(--citrus)] text-[var(--ink-900)] border-[var(--ink-900)] hover:bg-[var(--citrus-hover)]"
-          : "bg-[var(--background)] border-[var(--border)] hover:bg-[var(--bg-sunken)]")
+          ? "bg-citrus text-ink-900 border-ink-900 hover:bg-(--citrus-hover)"
+          : "bg-background border-border hover:bg-(--bg-sunken)")
       }
     >
       <div>
         <div className="text-[13px] font-medium">{label}</div>
         {sub && (
-          <div className={"text-[11px] " + (citrus ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+          <div className={"text-[11px] " + (citrus ? "text-ink-700" : "text-(--fg-muted)")}>
             {sub}
           </div>
         )}
       </div>
-      <div className={"text-[14px] " + (citrus ? "text-[var(--ink-900)]" : "text-[var(--fg-subtle)]")}>→</div>
+      <div className={"text-[14px] " + (citrus ? "text-ink-900" : "text-(--fg-subtle)")}>→</div>
     </Link>
   )
 }
@@ -259,20 +259,20 @@ function ActionChip({
 function dotColor(status: InvoiceStatus): string {
   switch (status) {
     case "PAID":
-      return "bg-[var(--status-paid-fg)]"
+      return "bg-(--status-paid-fg)"
     case "VIEWED":
-      return "bg-[var(--status-viewed-fg)]"
+      return "bg-(--status-viewed-fg)"
     case "SENT":
     case "PENDING":
-      return "bg-[var(--status-sent-fg)]"
+      return "bg-(--status-sent-fg)"
     case "OVERDUE":
-      return "bg-[var(--status-overdue-fg)]"
+      return "bg-(--status-overdue-fg)"
     case "VOID":
     case "CANCELLED":
-      return "bg-[var(--status-void-fg)]"
+      return "bg-(--status-void-fg)"
     case "DRAFT":
     default:
-      return "bg-[var(--fg-subtle)]"
+      return "bg-(--fg-subtle)"
   }
 }
 

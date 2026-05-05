@@ -92,17 +92,17 @@ export default function PublicInvoicePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
-        <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
       </div>
     )
   }
 
   if (error || !invoice) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center p-8 text-center gap-4">
-        <div className="font-[var(--font-display)] italic text-[40px]">No invoice here.</div>
-        <p className="text-[var(--fg-muted)] text-[14px] max-w-md">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 text-center gap-4">
+        <div className="font-display italic text-[40px]">No invoice here.</div>
+        <p className="text-(--fg-muted) text-[14px] max-w-md">
           That share link is wrong, expired, or the invoice was deleted.
         </p>
         <Button asChild variant="secondary">
@@ -113,7 +113,7 @@ export default function PublicInvoicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-sunken)]">
+    <div className="min-h-screen bg-(--bg-sunken)">
       <header className="flex items-center justify-between px-7 py-5 max-w-[920px] mx-auto">
         <Wordmark size="md" />
         <div className="flex items-center gap-2">
@@ -127,15 +127,15 @@ export default function PublicInvoicePage() {
         </div>
       </header>
 
-      <main className="bg-[var(--background)] max-w-[920px] mx-auto px-12 py-12 border border-[var(--border)] rounded-none mb-16 shadow-[var(--shadow-raised)]">
+      <main className="bg-background max-w-[920px] mx-auto px-12 py-12 border border-border rounded-none mb-16 shadow-(--shadow-raised)">
         {/* Top meta */}
         <div className="flex justify-between items-start gap-6 mb-9">
           <div>
             <div className="t-overline">Invoice</div>
-            <h1 className="font-[var(--font-display)] text-[64px] leading-[1.0] tracking-[-0.02em] mt-1">
+            <h1 className="font-display text-[64px] leading-[1.0] tracking-[-0.02em] mt-1">
               <span className="font-mono text-[40px] tracking-[0]">{invoice.invoiceNumber}</span>
             </h1>
-            <div className="text-[12px] text-[var(--fg-muted)] mt-1.5">
+            <div className="text-[12px] text-(--fg-muted) mt-1.5">
               Issued {formatDate(invoice.issueDate)} · Due {formatDate(invoice.dueDate)}
             </div>
           </div>
@@ -147,7 +147,7 @@ export default function PublicInvoicePage() {
           <div>
             <div className="t-overline">From</div>
             <div className="text-[16px] font-semibold mt-1.5">{invoice.company?.name}</div>
-            <div className="text-[12px] text-[var(--fg-muted)] mt-0.5 leading-[1.6]">
+            <div className="text-[12px] text-(--fg-muted) mt-0.5 leading-[1.6]">
               {formatAddressLines(invoice.company).map((line, i) => (
                 <span key={i}>
                   {line}
@@ -159,7 +159,7 @@ export default function PublicInvoicePage() {
           <div>
             <div className="t-overline">Bill to</div>
             <div className="text-[16px] font-semibold mt-1.5">{invoice.client?.name}</div>
-            <div className="text-[12px] text-[var(--fg-muted)] mt-0.5 leading-[1.6]">
+            <div className="text-[12px] text-(--fg-muted) mt-0.5 leading-[1.6]">
               {formatAddressLines(invoice.client).map((line, i) => (
                 <span key={i}>
                   {line}
@@ -175,15 +175,15 @@ export default function PublicInvoicePage() {
           <table className="w-full border-collapse mb-7">
             <thead>
               <tr>
-                <th className="text-left t-overline pb-2 border-b border-[var(--border)]">Description</th>
-                <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[70px]">Qty</th>
-                <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[120px]">Rate</th>
-                <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[140px]">Amount</th>
+                <th className="text-left t-overline pb-2 border-b border-border">Description</th>
+                <th className="text-right t-overline pb-2 border-b border-border w-[70px]">Qty</th>
+                <th className="text-right t-overline pb-2 border-b border-border w-[120px]">Rate</th>
+                <th className="text-right t-overline pb-2 border-b border-border w-[140px]">Amount</th>
               </tr>
             </thead>
             <tbody>
               {invoice.items.map((item) => (
-                <tr key={item.id} className="border-b border-[var(--border)]">
+                <tr key={item.id} className="border-b border-border">
                   <td className="py-3 text-[14px]">{item.description}</td>
                   <td className="py-3 text-right font-mono tabular-nums text-[13px]">
                     {formatQuantity(item.quantity)}
@@ -210,7 +210,7 @@ export default function PublicInvoicePage() {
               </div>
             )}
             {invoice.discountAmount > 0 && (
-              <div className="flex justify-between text-[var(--fg-muted)]">
+              <div className="flex justify-between text-(--fg-muted)">
                 <span>
                   Discount{" "}
                   {invoice.discountType === "PERCENTAGE"
@@ -221,13 +221,13 @@ export default function PublicInvoicePage() {
               </div>
             )}
             {invoice.taxAmount > 0 && (
-              <div className="flex justify-between text-[var(--fg-muted)]">
+              <div className="flex justify-between text-(--fg-muted)">
                 <span>Tax ({invoice.taxRate}%)</span>
                 <span className="font-mono tabular-nums">{formatCurrency(invoice.taxAmount)}</span>
               </div>
             )}
-            <div className="flex justify-between border-t border-[var(--ink-900)] dark:border-[var(--foreground)] mt-1.5 pt-2.5 text-[18px]">
-              <span className="font-[var(--font-display)] italic text-[22px]">Total due</span>
+            <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-1.5 pt-2.5 text-[18px]">
+              <span className="font-display italic text-[22px]">Total due</span>
               <span className="font-mono tabular-nums">{formatCurrency(invoice.total)}</span>
             </div>
           </div>
@@ -237,17 +237,17 @@ export default function PublicInvoicePage() {
         {invoice.status !== "PAID" && (
           <div className="mt-8 mb-2 flex flex-col items-center gap-2">
             <Button size="lg">Pay {formatCurrency(invoice.total)} →</Button>
-            <div className="text-[12px] text-[var(--fg-muted)]">Pay with card, ACH, or notify of payment by check.</div>
+            <div className="text-[12px] text-(--fg-muted)">Pay with card, ACH, or notify of payment by check.</div>
           </div>
         )}
 
         {invoice.notes && (
-          <div className="mt-9 pt-5 border-t border-dashed border-[var(--border-strong)] text-[12px] text-[var(--fg-muted)]">
+          <div className="mt-9 pt-5 border-t border-dashed border-(--border-strong) text-[12px] text-(--fg-muted)">
             {invoice.notes}
           </div>
         )}
 
-        <div className="mt-7 pt-5 border-t border-dashed border-[var(--border-strong)] flex justify-between text-[12px] text-[var(--fg-muted)]">
+        <div className="mt-7 pt-5 border-t border-dashed border-(--border-strong) flex justify-between text-[12px] text-(--fg-muted)">
           <span>Net 14.</span>
           <span className="font-mono">Powered by Vibe Voicer</span>
         </div>

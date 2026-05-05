@@ -71,14 +71,14 @@ export default function ClientsPage() {
     <ProtectedLayout>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-[var(--border)] bg-[var(--background)] text-[var(--fg-muted)] w-[280px]">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-[280px]">
             <Search className="h-3.5 w-3.5" />
             <input
               type="search"
               placeholder="Search by name or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent border-0 outline-none text-[13px] text-foreground placeholder:text-[var(--fg-muted)]"
+              className="flex-1 bg-transparent border-0 outline-none text-[13px] text-foreground placeholder:text-(--fg-muted)"
             />
           </div>
           <Button asChild>
@@ -89,7 +89,7 @@ export default function ClientsPage() {
           </Button>
         </div>
 
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] overflow-hidden">
+        <div className="bg-background border border-border rounded-[12px] overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -105,14 +105,14 @@ export default function ClientsPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10 text-[var(--fg-muted)]">
+                  <TableCell colSpan={7} className="text-center py-10 text-(--fg-muted)">
                     Loading…
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
-                    <div className="font-[var(--font-display)] italic text-[24px] mb-2">No clients yet.</div>
+                    <div className="font-display italic text-[24px] mb-2">No clients yet.</div>
                     <Button asChild>
                       <Link href="/clients/new">Add your first client</Link>
                     </Button>
@@ -126,9 +126,9 @@ export default function ClientsPage() {
                         {client.name}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">{client.email}</TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">{client.phone}</TableCell>
-                    <TableCell className="text-[var(--fg-muted)] text-[12px]">
+                    <TableCell className="text-(--fg-muted) text-[12px]">{client.email}</TableCell>
+                    <TableCell className="text-(--fg-muted) text-[12px]">{client.phone}</TableCell>
+                    <TableCell className="text-(--fg-muted) text-[12px]">
                       {[client.city, client.state].filter(Boolean).join(", ")}
                     </TableCell>
                     <TableCell data-num="true">{client.invoiceCount}</TableCell>
@@ -145,7 +145,7 @@ export default function ClientsPage() {
                           size="icon"
                           onClick={() => handleDelete(client.id)}
                           title="Delete"
-                          className="text-[var(--fg-muted)] hover:text-[var(--destructive)]"
+                          className="text-(--fg-muted) hover:text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>

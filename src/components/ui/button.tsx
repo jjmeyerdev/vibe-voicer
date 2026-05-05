@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,color,border-color,transform] duration-[120ms] ease-[cubic-bezier(0.25,1,0.5,1)] active:scale-[0.98] active:duration-[80ms] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-2",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,color,border-color,transform] duration-[120ms] ease-[cubic-bezier(0.25,1,0.5,1)] active:scale-[0.98] active:duration-[80ms] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--citrus)] text-[var(--ink-900)] border border-[var(--ink-900)] font-semibold hover:bg-[var(--citrus-hover)] dark:hover:bg-[#F2FF6E]",
+          "bg-citrus text-ink-900 border border-ink-900 font-semibold hover:bg-(--citrus-hover) dark:hover:bg-[#F2FF6E]",
         secondary:
-          "bg-[var(--bg-elevated)] text-foreground border border-[var(--border-strong)] hover:bg-[var(--bg-sunken)]",
+          "bg-(--bg-elevated) text-foreground border border-(--border-strong) hover:bg-(--bg-sunken)",
         ghost:
-          "bg-transparent text-foreground border border-transparent hover:bg-[var(--bg-sunken)]",
+          "bg-transparent text-foreground border border-transparent hover:bg-(--bg-sunken)",
         outline:
-          "bg-transparent text-foreground border border-[var(--ink-900)] hover:bg-[var(--bg-sunken)] dark:border-[var(--foreground)]",
+          "bg-transparent text-foreground border border-ink-900 hover:bg-(--bg-sunken) dark:border-foreground",
         destructive:
-          "bg-transparent text-[#94203A] border border-[#C8325040] hover:bg-[var(--status-overdue-tint)] dark:text-[#F09BA9] dark:border-[#F09BA940]",
+          "bg-transparent text-[#94203A] border border-[#C8325040] hover:bg-(--status-overdue-tint) dark:text-[#F09BA9] dark:border-[#F09BA940]",
         link: "text-foreground underline-offset-4 hover:underline border-0 px-0 h-auto",
       },
       size: {

@@ -43,7 +43,7 @@ export function ProtectedLayout({ children, title, subtitle }: ProtectedLayoutPr
   if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+        <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
       </div>
     )
   }
@@ -53,7 +53,7 @@ export function ProtectedLayout({ children, title, subtitle }: ProtectedLayoutPr
   const meta = title ? { title, subtitle } : defaultTitle(pathname)
 
   return (
-    <div className="min-h-screen bg-[var(--bg-sunken)] grid grid-cols-[248px_1fr]">
+    <div className="min-h-screen bg-(--bg-sunken) grid grid-cols-[248px_1fr]">
       <AppSidebar />
       <div className="flex flex-col min-w-0">
         <AppTopbar title={meta.title} subtitle={meta.subtitle} />

@@ -12,13 +12,13 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--border)] px-12 py-8">
+    <footer className="border-t border-border px-12 py-8">
       <div className="mx-auto max-w-[1280px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-[12px]">
         <div className="flex items-center gap-4">
           <Wordmark size="sm" />
-          <span className="text-[var(--fg-muted)]">© {new Date().getFullYear()} · Made for people who&rsquo;d rather be doing the work.</span>
+          <span className="text-(--fg-muted)">© {new Date().getFullYear()} · Made for people who&rsquo;d rather be doing the work.</span>
         </div>
-        <nav className="flex items-center gap-5 text-[var(--fg-muted)]">
+        <nav className="flex items-center gap-5 text-(--fg-muted)">
           {links.map((l) => (
             <Link key={l.name} href={l.href} className="hover:text-foreground transition-colors duration-[120ms]">
               {l.name}

@@ -50,10 +50,10 @@ export default function PricingPage() {
       <section className="px-12 py-20">
         <div className="mx-auto max-w-[1100px] mb-10">
           <div className="t-overline">Pricing</div>
-          <h1 className="font-[var(--font-display)] text-[64px] leading-[1.05] tracking-[-0.02em] mt-2">
+          <h1 className="font-display text-[64px] leading-[1.05] tracking-[-0.02em] mt-2">
             Pay <em className="italic">monthly</em>. Cancel anytime.
           </h1>
-          <p className="mt-4 text-[18px] text-[var(--fg-muted)] max-w-[560px]">
+          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-[560px]">
             One price, billed monthly. No annual contracts, no per-invoice fees, no upsells we hide in the footer.
           </p>
         </div>
@@ -65,31 +65,31 @@ export default function PricingPage() {
               className={
                 "rounded-[16px] p-7 flex flex-col gap-3.5 relative " +
                 (t.highlight
-                  ? "bg-[var(--citrus)] text-[var(--ink-900)] border border-[var(--ink-900)]"
-                  : "bg-[var(--bg-elevated)] border border-[var(--border)]")
+                  ? "bg-citrus text-ink-900 border border-ink-900"
+                  : "bg-(--bg-elevated) border border-border")
               }
             >
               {t.highlight && (
-                <div className="absolute -top-3 left-6 bg-[var(--ink-900)] text-[var(--citrus)] text-[11px] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
+                <div className="absolute -top-3 left-6 bg-ink-900 text-citrus text-[11px] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
                   Most picked
                 </div>
               )}
-              <div className="font-[var(--font-display)] italic text-[22px] leading-none">{t.name}</div>
+              <div className="font-display italic text-[22px] leading-none">{t.name}</div>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-[var(--font-display)] text-[56px] leading-none tracking-[-0.02em]">
+                <span className="font-display text-[56px] leading-none tracking-[-0.02em]">
                   {t.price}
                 </span>
-                <span className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+                <span className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
                   /{t.per}
                 </span>
               </div>
-              <div className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+              <div className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
                 {t.desc}
               </div>
               <ul className="list-none p-0 m-0 flex flex-col gap-2 text-[13px]">
                 {t.feats.map((f) => (
                   <li key={f} className="flex items-start gap-2">
-                    <span className="inline-block w-4 text-[var(--ink-900)]">✓</span>
+                    <span className="inline-block w-4 text-ink-900">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
@@ -102,7 +102,7 @@ export default function PricingPage() {
                   className={
                     "w-full justify-center " +
                     (t.highlight
-                      ? "bg-[var(--ink-900)] text-[var(--citrus)] border-[var(--ink-900)] hover:bg-[#1f1e1b]"
+                      ? "bg-ink-900 text-citrus border-ink-900 hover:bg-[#1f1e1b]"
                       : "")
                   }
                 >
@@ -113,16 +113,16 @@ export default function PricingPage() {
           ))}
         </div>
 
-        <div className="mx-auto max-w-[1100px] mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px] text-[var(--fg-muted)]">
-          <div className="border-t border-[var(--border)] pt-4">
+        <div className="mx-auto max-w-[1100px] mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px] text-(--fg-muted)">
+          <div className="border-t border-border pt-4">
             <div className="t-overline mb-2">Refunds</div>
             <p>14-day money back. No forms, no questions, just email us.</p>
           </div>
-          <div className="border-t border-[var(--border)] pt-4">
+          <div className="border-t border-border pt-4">
             <div className="t-overline mb-2">Taxes</div>
             <p>Prices listed are pre-tax. We collect VAT/GST where required by your country.</p>
           </div>
-          <div className="border-t border-[var(--border)] pt-4">
+          <div className="border-t border-border pt-4">
             <div className="t-overline mb-2">Switch plans</div>
             <p>Upgrade or downgrade anytime. We pro-rate the rest of your month.</p>
           </div>

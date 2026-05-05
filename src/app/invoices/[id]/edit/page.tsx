@@ -186,7 +186,7 @@ export default function EditInvoicePage() {
     return (
       <ProtectedLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+          <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
     )
@@ -196,7 +196,7 @@ export default function EditInvoicePage() {
     return (
       <ProtectedLayout>
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-[var(--font-display)] italic text-[40px]">Not here.</div>
+          <div className="font-display italic text-[40px]">Not here.</div>
           <Button asChild>
             <Link href="/invoices">← Back to invoices</Link>
           </Button>
@@ -219,7 +219,7 @@ export default function EditInvoicePage() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <section className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-6">
+            <section className="bg-background border border-border rounded-[12px] p-6">
               <div className="t-overline">Invoice details</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <FormField
@@ -288,7 +288,7 @@ export default function EditInvoicePage() {
               </div>
             </section>
 
-            <section className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] overflow-hidden">
+            <section className="bg-background border border-border rounded-[12px] overflow-hidden">
               <div className="px-6 pt-6">
                 <div className="t-overline">Line items</div>
               </div>
@@ -307,7 +307,7 @@ export default function EditInvoicePage() {
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[1fr_80px_120px_140px_32px] gap-2 items-center py-1 border-t border-[var(--border)]"
+                      className="grid grid-cols-[1fr_80px_120px_140px_32px] gap-2 items-center py-1 border-t border-border"
                     >
                       <FormField
                         control={form.control}
@@ -317,7 +317,7 @@ export default function EditInvoicePage() {
                             <FormControl>
                               <Input
                                 {...field}
-                                className="border-transparent bg-transparent focus-visible:bg-[var(--bg-elevated)] focus-visible:border-[var(--border-strong)]"
+                                className="border-transparent bg-transparent focus-visible:bg-(--bg-elevated) focus-visible:border-(--border-strong)"
                               />
                             </FormControl>
                           </FormItem>
@@ -335,7 +335,7 @@ export default function EditInvoicePage() {
                                 min="0"
                                 value={field.value ?? 0}
                                 onChange={(e) => field.onChange(Math.round(parseFloat(e.target.value) || 0))}
-                                className="border-transparent bg-transparent text-right font-mono tabular-nums focus-visible:bg-[var(--bg-elevated)] focus-visible:border-[var(--border-strong)]"
+                                className="border-transparent bg-transparent text-right font-mono tabular-nums focus-visible:bg-(--bg-elevated) focus-visible:border-(--border-strong)"
                               />
                             </FormControl>
                           </FormItem>
@@ -353,7 +353,7 @@ export default function EditInvoicePage() {
                                 min="0"
                                 value={field.value ?? 0}
                                 onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                className="border-transparent bg-transparent text-right font-mono tabular-nums focus-visible:bg-[var(--bg-elevated)] focus-visible:border-[var(--border-strong)]"
+                                className="border-transparent bg-transparent text-right font-mono tabular-nums focus-visible:bg-(--bg-elevated) focus-visible:border-(--border-strong)"
                               />
                             </FormControl>
                           </FormItem>
@@ -369,7 +369,7 @@ export default function EditInvoicePage() {
                         disabled={isOriginal || fields.length === 1}
                         onClick={() => remove(index)}
                         title={isOriginal ? "Original line — can’t remove" : "Remove"}
-                        className="text-[var(--fg-muted)] hover:text-[var(--destructive)] disabled:opacity-30"
+                        className="text-(--fg-muted) hover:text-destructive disabled:opacity-30"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -393,7 +393,7 @@ export default function EditInvoicePage() {
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
-              <section className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-6">
+              <section className="bg-background border border-border rounded-[12px] p-6">
                 <div className="t-overline">Adjustments</div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <FormField
@@ -474,7 +474,7 @@ export default function EditInvoicePage() {
                 </div>
               </section>
 
-              <aside className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-6 self-start">
+              <aside className="bg-background border border-border rounded-[12px] p-6 self-start">
                 <div className="t-overline">Totals</div>
                 <div className="flex flex-col gap-2 mt-3 text-[13px]">
                   <div className="flex justify-between">
@@ -482,26 +482,26 @@ export default function EditInvoicePage() {
                     <span className="font-mono tabular-nums">{formatCurrency(subtotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-[var(--fg-muted)]">
+                    <div className="flex justify-between text-(--fg-muted)">
                       <span>Discount</span>
                       <span className="font-mono tabular-nums">-{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
                   {taxAmount > 0 && (
-                    <div className="flex justify-between text-[var(--fg-muted)]">
+                    <div className="flex justify-between text-(--fg-muted)">
                       <span>Tax</span>
                       <span className="font-mono tabular-nums">{formatCurrency(taxAmount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between border-t border-[var(--ink-900)] dark:border-[var(--foreground)] mt-2 pt-2.5 text-[18px]">
-                    <span className="font-[var(--font-display)] italic text-[22px]">Total</span>
+                  <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-2 pt-2.5 text-[18px]">
+                    <span className="font-display italic text-[22px]">Total</span>
                     <span className="font-mono tabular-nums">{formatCurrency(total)}</span>
                   </div>
                 </div>
               </aside>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border)]">
+            <div className="flex justify-end gap-2 pt-4 border-t border-border">
               <Button type="button" variant="ghost" asChild>
                 <Link href={`/invoices/${invoiceId}`}>Cancel</Link>
               </Button>

@@ -93,8 +93,8 @@ export default function LoginPage() {
             ))}
           </div>
           <div className="relative my-6 text-center">
-            <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--border)]" />
-            <span className="relative inline-block bg-[var(--background)] px-3 text-[11px] uppercase tracking-[0.1em] text-[var(--fg-muted)]">
+            <span className="absolute inset-x-0 top-1/2 h-px bg-border" />
+            <span className="relative inline-block bg-background px-3 text-[11px] uppercase tracking-widest text-(--fg-muted)">
               or
             </span>
           </div>
@@ -131,7 +131,7 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <div className="mt-7 text-[12px] text-[var(--fg-muted)]">
+      <div className="mt-7 text-[12px] text-(--fg-muted)">
         No account?{" "}
         <Link href="/register" className="text-foreground hover:underline">
           Make one — free.

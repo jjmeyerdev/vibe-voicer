@@ -12,18 +12,18 @@ type AuthShellProps = {
 
 export function AuthShell({ side, overline, heading, children }: AuthShellProps) {
   return (
-    <div className="min-h-screen bg-[var(--background)] grid grid-cols-1 lg:grid-cols-[1fr_1.1fr]">
-      <aside className="hidden lg:flex flex-col justify-between p-12 border-r border-[var(--border)] bg-[var(--bg-sunken)]">
+    <div className="min-h-screen bg-background grid grid-cols-1 lg:grid-cols-[1fr_1.1fr]">
+      <aside className="hidden lg:flex flex-col justify-between p-12 border-r border-border bg-(--bg-sunken)">
         <Wordmark size="lg" />
         <div>
-          <div className="font-[var(--font-display)] italic text-[36px] leading-[1.2] text-foreground">
+          <div className="font-display italic text-[36px] leading-[1.2] text-foreground">
             &ldquo;{side.quote}&rdquo;
           </div>
           {side.caption && (
-            <div className="mt-4 text-[12px] text-[var(--fg-muted)]">{side.caption}</div>
+            <div className="mt-4 text-[12px] text-(--fg-muted)">{side.caption}</div>
           )}
         </div>
-        <div className="text-[12px] text-[var(--fg-muted)]">© {new Date().getFullYear()} · Vibe Voicer</div>
+        <div className="text-[12px] text-(--fg-muted)">© {new Date().getFullYear()} · Vibe Voicer</div>
       </aside>
 
       <main className="flex flex-col">
@@ -38,7 +38,7 @@ export function AuthShell({ side, overline, heading, children }: AuthShellProps)
         <div className="flex-1 flex items-center justify-center px-6 lg:px-12 py-10">
           <div className="w-full max-w-[420px]">
             <div className="t-overline mb-3">{overline}</div>
-            <h1 className="font-[var(--font-display)] text-[64px] leading-[1.0] tracking-[-0.02em] mb-8 max-w-[400px]">
+            <h1 className="font-display text-[64px] leading-[1.0] tracking-[-0.02em] mb-8 max-w-[400px]">
               {heading}
             </h1>
             {children}

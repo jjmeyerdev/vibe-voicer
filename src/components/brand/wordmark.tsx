@@ -17,7 +17,7 @@ export function Wordmark({ size = "md", className, showDot = true }: WordmarkPro
   const fontPx = SIZE_PX[size]
   return (
     <span
-      className={cn("inline-flex items-baseline leading-none font-[var(--font-display)]", className)}
+      className={cn("inline-flex items-baseline leading-none font-display", className)}
       style={{ fontSize: fontPx }}
     >
       <span>Vibe</span>
@@ -25,7 +25,7 @@ export function Wordmark({ size = "md", className, showDot = true }: WordmarkPro
       {showDot && (
         <span
           aria-hidden
-          className="inline-block bg-[var(--citrus)] border border-[var(--ink-900)] dark:border-transparent rounded-full"
+          className="inline-block bg-citrus border border-ink-900 dark:border-transparent rounded-full"
           style={{
             width: `${fontPx * 0.18}px`,
             height: `${fontPx * 0.18}px`,

@@ -46,10 +46,10 @@ export default function FeaturesPage() {
       <section className="px-12 py-20">
         <div className="mx-auto max-w-[1100px] mb-10">
           <div className="t-overline">Features</div>
-          <h1 className="font-[var(--font-display)] text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 max-w-[820px]">
+          <h1 className="font-display text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 max-w-[820px]">
             The boring parts, <em className="italic">handled</em>.
           </h1>
-          <p className="mt-4 text-[18px] text-[var(--fg-muted)] max-w-[640px]">
+          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-[640px]">
             Everything Vibe Voicer does, in one read. Nothing here is optional bloat — it&rsquo;s all the stuff you would&rsquo;ve duct-taped together yourself.
           </p>
         </div>
@@ -58,11 +58,11 @@ export default function FeaturesPage() {
           {features.map((it) => (
             <div
               key={it.k}
-              className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-[16px] p-7 hover:border-[var(--border-strong)] transition-colors"
+              className="bg-(--bg-elevated) border border-border rounded-[16px] p-7 hover:border-(--border-strong) transition-colors"
             >
-              <div className="font-mono text-[12px] text-[var(--fg-subtle)] mb-4">{it.k}</div>
-              <div className="font-[var(--font-display)] text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
-              <div className="text-[14px] text-[var(--fg-muted)] leading-[1.55] max-w-[460px]">{it.b}</div>
+              <div className="font-mono text-[12px] text-(--fg-subtle) mb-4">{it.k}</div>
+              <div className="font-display text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
+              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-[460px]">{it.b}</div>
             </div>
           ))}
         </div>

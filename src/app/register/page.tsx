@@ -100,8 +100,8 @@ export default function RegisterPage() {
             ))}
           </div>
           <div className="relative my-6 text-center">
-            <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--border)]" />
-            <span className="relative inline-block bg-[var(--background)] px-3 text-[11px] uppercase tracking-[0.1em] text-[var(--fg-muted)]">
+            <span className="absolute inset-x-0 top-1/2 h-px bg-border" />
+            <span className="relative inline-block bg-background px-3 text-[11px] uppercase tracking-widest text-(--fg-muted)">
               or
             </span>
           </div>
@@ -145,7 +145,7 @@ export default function RegisterPage() {
             minLength={10}
             autoComplete="new-password"
           />
-          <div className="text-[11px] text-[var(--fg-muted)] mt-0.5">
+          <div className="text-[11px] text-(--fg-muted) mt-0.5">
             We&rsquo;ll never email you about a &ldquo;Q3 product newsletter.&rdquo;
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function RegisterPage() {
         </Button>
       </form>
 
-      <div className="mt-7 text-[12px] text-[var(--fg-muted)]">
+      <div className="mt-7 text-[12px] text-(--fg-muted)">
         Already here?{" "}
         <Link href="/login" className="text-foreground hover:underline">
           Sign in instead.

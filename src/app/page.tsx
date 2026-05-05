@@ -79,7 +79,7 @@ export default function Home() {
   if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+        <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
       </div>
     )
   }
@@ -93,20 +93,20 @@ export default function Home() {
       {/* Hero */}
       <section className="relative px-12 pt-20 pb-12">
         <div className="mx-auto max-w-[1100px]">
-          <div className="inline-flex items-center gap-2 text-[12px] text-[var(--fg-muted)] px-3 py-1.5 border border-[var(--border)] rounded-full mb-7">
+          <div className="inline-flex items-center gap-2 text-[12px] text-(--fg-muted) px-3 py-1.5 border border-border rounded-full mb-7">
             <span
               aria-hidden
-              className="w-1.5 h-1.5 rounded-full bg-[var(--citrus)] border border-[var(--ink-900)] dark:border-transparent"
+              className="w-1.5 h-1.5 rounded-full bg-citrus border border-ink-900 dark:border-transparent"
             />
             For freelancers who&rsquo;d rather be designing
           </div>
-          <h1 className="font-[var(--font-display)] leading-[1.0] tracking-[-0.02em] m-0 mb-7 max-w-[1000px]" style={{ fontSize: "clamp(56px, 9vw, 124px)" }}>
+          <h1 className="font-display leading-[1.0] tracking-[-0.02em] m-0 mb-7 max-w-[1000px]" style={{ fontSize: "clamp(56px, 9vw, 124px)" }}>
             Get{" "}
             <em className="not-italic">
               <span className="italic">paid</span>
               <span
                 aria-hidden
-                className="inline-block bg-[var(--citrus)] border border-[var(--ink-900)] dark:border-transparent rounded-full"
+                className="inline-block bg-citrus border border-ink-900 dark:border-transparent rounded-full"
                 style={{ width: "0.14em", height: "0.14em", verticalAlign: "0.18em", marginLeft: "0.04em" }}
               />
             </em>{" "}
@@ -114,7 +114,7 @@ export default function Home() {
             <br />
             you mean it.
           </h1>
-          <p className="text-[20px] leading-[1.55] text-[var(--fg-muted)] max-w-[640px] mb-8">
+          <p className="text-[20px] leading-[1.55] text-(--fg-muted) max-w-[640px] mb-8">
             Invoicing that doesn&rsquo;t feel like homework. Send a clean invoice, see when your client opens it, and quit chasing payments through three different apps.
           </p>
           <div className="flex flex-wrap gap-3 items-center mb-7">
@@ -125,11 +125,11 @@ export default function Home() {
               <Link href="#features">See a sample invoice →</Link>
             </Button>
           </div>
-          <div className="flex flex-wrap gap-4 text-[12px] text-[var(--fg-muted)]">
+          <div className="flex flex-wrap gap-4 text-[12px] text-(--fg-muted)">
             <span className="font-mono tabular-nums">Free for 5 invoices/mo</span>
-            <span className="text-[var(--fg-subtle)]">·</span>
+            <span className="text-(--fg-subtle)">·</span>
             <span className="font-mono tabular-nums">$12/mo Pro</span>
-            <span className="text-[var(--fg-subtle)]">·</span>
+            <span className="text-(--fg-subtle)">·</span>
             <span className="font-mono tabular-nums">No annual contracts</span>
           </div>
         </div>
@@ -137,9 +137,9 @@ export default function Home() {
       </section>
 
       {/* Proof */}
-      <section className="px-12 py-9 border-t border-b border-[var(--border)]">
+      <section className="px-12 py-9 border-t border-b border-border">
         <div className="mx-auto max-w-[1100px] flex flex-wrap items-center justify-between gap-9">
-          <div className="font-[var(--font-display)] italic text-[22px] text-[var(--fg-muted)]">
+          <div className="font-display italic text-[22px] text-(--fg-muted)">
             &ldquo;Stopped using three apps for one job. Final form.&rdquo;
           </div>
           <div className="flex gap-8">
@@ -149,7 +149,7 @@ export default function Home() {
               { num: "11k", lab: "Freelancers, no agencies" },
             ].map((s) => (
               <div key={s.lab}>
-                <div className="font-[var(--font-display)] text-[32px] leading-none">{s.num}</div>
+                <div className="font-display text-[32px] leading-none">{s.num}</div>
                 <div className="t-overline mt-1">{s.lab}</div>
               </div>
             ))}
@@ -158,10 +158,10 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="features" className="px-12 py-20 bg-[var(--bg-sunken)]">
+      <section id="features" className="px-12 py-20 bg-(--bg-sunken)">
         <div className="mx-auto max-w-[1100px] mb-9">
           <div className="t-overline">What it does</div>
-          <h2 className="font-[var(--font-display)] text-[56px] leading-[1.05] mt-2 max-w-[720px]">
+          <h2 className="font-display text-[56px] leading-[1.05] mt-2 max-w-[720px]">
             The boring parts, <em className="italic">handled</em>.
           </h2>
         </div>
@@ -169,11 +169,11 @@ export default function Home() {
           {features.map((it) => (
             <div
               key={it.k}
-              className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-[16px] p-7 hover:border-[var(--border-strong)] transition-colors"
+              className="bg-(--bg-elevated) border border-border rounded-[16px] p-7 hover:border-(--border-strong) transition-colors"
             >
-              <div className="font-mono text-[12px] text-[var(--fg-subtle)] mb-4">{it.k}</div>
-              <div className="font-[var(--font-display)] text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
-              <div className="text-[14px] text-[var(--fg-muted)] leading-[1.55] max-w-[420px]">{it.b}</div>
+              <div className="font-mono text-[12px] text-(--fg-subtle) mb-4">{it.k}</div>
+              <div className="font-display text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
+              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-[420px]">{it.b}</div>
             </div>
           ))}
         </div>
@@ -183,7 +183,7 @@ export default function Home() {
       <section id="pricing" className="px-12 py-20">
         <div className="mx-auto max-w-[1100px] mb-10">
           <div className="t-overline">Pricing</div>
-          <h2 className="font-[var(--font-display)] text-[52px] leading-[1.05] mt-2">
+          <h2 className="font-display text-[52px] leading-[1.05] mt-2">
             Pay <em className="italic">monthly</em>. Cancel anytime.
           </h2>
         </div>
@@ -194,31 +194,31 @@ export default function Home() {
               className={
                 "rounded-[16px] p-7 flex flex-col gap-3.5 relative " +
                 (t.highlight
-                  ? "bg-[var(--citrus)] text-[var(--ink-900)] border border-[var(--ink-900)]"
-                  : "bg-[var(--bg-elevated)] border border-[var(--border)]")
+                  ? "bg-citrus text-ink-900 border border-ink-900"
+                  : "bg-(--bg-elevated) border border-border")
               }
             >
               {t.highlight && (
-                <div className="absolute -top-3 left-6 bg-[var(--ink-900)] text-[var(--citrus)] text-[11px] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
+                <div className="absolute -top-3 left-6 bg-ink-900 text-citrus text-[11px] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
                   Most picked
                 </div>
               )}
-              <div className="font-[var(--font-display)] italic text-[22px] leading-none">{t.name}</div>
+              <div className="font-display italic text-[22px] leading-none">{t.name}</div>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-[var(--font-display)] text-[56px] leading-none tracking-[-0.02em]">
+                <span className="font-display text-[56px] leading-none tracking-[-0.02em]">
                   {t.price}
                 </span>
-                <span className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+                <span className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
                   /{t.per}
                 </span>
               </div>
-              <div className={"text-[13px] " + (t.highlight ? "text-[var(--ink-700)]" : "text-[var(--fg-muted)]")}>
+              <div className={"text-[13px] " + (t.highlight ? "text-ink-700" : "text-(--fg-muted)")}>
                 {t.desc}
               </div>
               <ul className="list-none p-0 m-0 flex flex-col gap-2 text-[13px]">
                 {t.feats.map((f) => (
                   <li key={f} className="flex items-start gap-2">
-                    <span className="inline-block w-4 text-[var(--ink-900)]">✓</span>
+                    <span className="inline-block w-4 text-ink-900">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
@@ -231,7 +231,7 @@ export default function Home() {
                   className={
                     "w-full justify-center " +
                     (t.highlight
-                      ? "bg-[var(--ink-900)] text-[var(--citrus)] border-[var(--ink-900)] hover:bg-[#1f1e1b]"
+                      ? "bg-ink-900 text-citrus border-ink-900 hover:bg-[#1f1e1b]"
                       : "")
                   }
                 >

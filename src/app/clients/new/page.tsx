@@ -72,7 +72,7 @@ export default function NewClientPage() {
           </Link>
         </Button>
 
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-7">
+        <div className="bg-background border border-border rounded-[12px] p-7">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -186,7 +186,7 @@ export default function NewClientPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 mt-2 border-t border-[var(--border)]">
+              <div className="flex justify-end gap-2 pt-4 mt-2 border-t border-border">
                 <Button type="button" variant="ghost" asChild>
                   <Link href="/clients">Cancel</Link>
                 </Button>

@@ -10,28 +10,28 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[var(--bg-sunken)] text-foreground border border-transparent",
+          "bg-(--bg-sunken) text-foreground border border-transparent",
         secondary:
-          "bg-[var(--bg-sunken)] text-[var(--fg-muted)] border border-transparent",
+          "bg-(--bg-sunken) text-(--fg-muted) border border-transparent",
         outline:
-          "bg-transparent text-foreground border border-[var(--border-strong)]",
+          "bg-transparent text-foreground border border-(--border-strong)",
         destructive:
-          "bg-[var(--status-overdue-bg)] text-[var(--status-overdue-fg)] border border-transparent",
+          "bg-(--status-overdue-bg) text-(--status-overdue-fg) border border-transparent",
         // Invoice status variants — lowercase labels
         draft:
-          "bg-[var(--status-draft-bg)] text-[var(--status-draft-fg)] border border-transparent lowercase",
+          "bg-(--status-draft-bg) text-(--status-draft-fg) border border-transparent lowercase",
         sent:
-          "bg-[var(--status-sent-bg)] text-[var(--status-sent-fg)] border border-transparent lowercase",
+          "bg-(--status-sent-bg) text-(--status-sent-fg) border border-transparent lowercase",
         viewed:
-          "bg-[var(--status-viewed-bg)] text-[var(--status-viewed-fg)] border border-transparent lowercase",
+          "bg-(--status-viewed-bg) text-(--status-viewed-fg) border border-transparent lowercase",
         paid:
-          "bg-[var(--status-paid-bg)] text-[var(--status-paid-fg)] border border-transparent lowercase",
+          "bg-(--status-paid-bg) text-(--status-paid-fg) border border-transparent lowercase",
         overdue:
-          "bg-[var(--status-overdue-bg)] text-[var(--status-overdue-fg)] border border-transparent lowercase",
+          "bg-(--status-overdue-bg) text-(--status-overdue-fg) border border-transparent lowercase",
         pending:
-          "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)] border border-transparent lowercase",
+          "bg-(--status-pending-bg) text-(--status-pending-fg) border border-transparent lowercase",
         void:
-          "bg-[var(--status-void-bg)] text-[var(--status-void-fg)] border border-transparent lowercase",
+          "bg-(--status-void-bg) text-(--status-void-fg) border border-transparent lowercase",
       },
     },
     defaultVariants: {

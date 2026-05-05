@@ -111,7 +111,7 @@ export default function InvoiceDetailPage() {
     return (
       <ProtectedLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="h-px w-24 bg-[var(--ink-300)] dark:bg-[var(--ink-700)] animate-pulse" />
+          <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
     )
@@ -121,8 +121,8 @@ export default function InvoiceDetailPage() {
     return (
       <ProtectedLayout>
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-[var(--font-display)] italic text-[40px]">Not here.</div>
-          <p className="text-[var(--fg-muted)]">That invoice doesn’t exist or was deleted.</p>
+          <div className="font-display italic text-[40px]">Not here.</div>
+          <p className="text-(--fg-muted)">That invoice doesn’t exist or was deleted.</p>
           <Button asChild>
             <Link href="/invoices">← Back to invoices</Link>
           </Button>
@@ -175,33 +175,33 @@ export default function InvoiceDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-3.5 items-start">
           {/* Timeline */}
-          <aside className="bg-[var(--background)] border border-[var(--border)] rounded-[12px] p-5">
+          <aside className="bg-background border border-border rounded-[12px] p-5">
             <div className="t-overline">Timeline</div>
             <ul className="mt-3 list-none p-0 m-0">
               {timeline.map((step, idx) => (
                 <li key={idx} className="grid grid-cols-[24px_1fr] gap-2.5 pb-4 relative">
                   <div className="relative">
                     {idx !== timeline.length - 1 && (
-                      <span className="absolute left-[11px] top-2 -bottom-2.5 w-px bg-[var(--border-strong)]" />
+                      <span className="absolute left-[11px] top-2 -bottom-2.5 w-px bg-(--border-strong)" />
                     )}
                     <span
                       className={
                         "block w-2.5 h-2.5 rounded-full mx-auto mt-1.5 " +
                         (step.pending
-                          ? "bg-transparent border border-dashed border-[var(--fg-subtle)]"
+                          ? "bg-transparent border border-dashed border-(--fg-subtle)"
                           : step.state === "paid"
-                          ? "bg-[var(--status-paid-fg)]"
+                          ? "bg-(--status-paid-fg)"
                           : step.state === "viewed"
-                          ? "bg-[var(--status-viewed-fg)]"
+                          ? "bg-(--status-viewed-fg)"
                           : step.state === "sent"
-                          ? "bg-[var(--status-sent-fg)]"
-                          : "bg-[var(--status-draft-fg)]")
+                          ? "bg-(--status-sent-fg)"
+                          : "bg-(--status-draft-fg)")
                       }
                     />
                   </div>
                   <div className={step.pending ? "opacity-55" : ""}>
                     <div className="text-[13px] leading-[1.4]">{step.label}</div>
-                    <div className="text-[11px] text-[var(--fg-muted)] mt-0.5">{step.time}</div>
+                    <div className="text-[11px] text-(--fg-muted) mt-0.5">{step.time}</div>
                   </div>
                 </li>
               ))}
@@ -221,12 +221,12 @@ export default function InvoiceDetailPage() {
           </aside>
 
           {/* Paper invoice */}
-          <section className="bg-[var(--background)] border border-[var(--border)] p-9">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-[var(--border)] mb-5">
+          <section className="bg-background border border-border p-9">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-border mb-5">
               <div>
                 <div className="t-overline">Invoice</div>
                 <div className="font-mono tabular-nums text-[24px] mt-1.5">{invoice.invoiceNumber}</div>
-                <div className="text-[12px] text-[var(--fg-muted)] mt-0.5 leading-[1.5]">
+                <div className="text-[12px] text-(--fg-muted) mt-0.5 leading-[1.5]">
                   Issued {new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
                   <br />
                   Due {new Date(invoice.dueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
@@ -234,8 +234,8 @@ export default function InvoiceDetailPage() {
               </div>
               <div>
                 <div className="t-overline">Bill to</div>
-                <div className="font-[var(--font-display)] text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
-                <div className="text-[12px] text-[var(--fg-muted)] mt-1 leading-[1.5]">
+                <div className="font-display text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
+                <div className="text-[12px] text-(--fg-muted) mt-1 leading-[1.5]">
                   {invoice.client.email}
                   {invoice.client.phone && (
                     <>
@@ -258,15 +258,15 @@ export default function InvoiceDetailPage() {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="text-left t-overline pb-2 border-b border-[var(--border)]">Description</th>
-                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[60px]">Qty</th>
-                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[120px]">Rate</th>
-                  <th className="text-right t-overline pb-2 border-b border-[var(--border)] w-[140px]">Amount</th>
+                  <th className="text-left t-overline pb-2 border-b border-border">Description</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-[60px]">Qty</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-[120px]">Rate</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-[140px]">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item) => (
-                  <tr key={item.id} className="border-b border-[var(--border)]">
+                  <tr key={item.id} className="border-b border-border">
                     <td className="py-3 text-[14px]">{item.description}</td>
                     <td className="py-3 text-right font-mono tabular-nums text-[13px]">{formatQuantity(item.quantity)}</td>
                     <td className="py-3 text-right font-mono tabular-nums text-[13px]">{formatCurrency(item.unitPrice)}</td>
@@ -283,20 +283,20 @@ export default function InvoiceDetailPage() {
                   <span className="font-mono tabular-nums">{formatCurrency(invoice.subtotal)}</span>
                 </div>
                 {invoice.taxAmount > 0 && (
-                  <div className="flex justify-between text-[var(--fg-muted)]">
+                  <div className="flex justify-between text-(--fg-muted)">
                     <span>Tax ({invoice.taxRate}%)</span>
                     <span className="font-mono tabular-nums">{formatCurrency(invoice.taxAmount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-[var(--ink-900)] dark:border-[var(--foreground)] mt-1.5 pt-2.5 text-[18px]">
-                  <span className="font-[var(--font-display)] italic text-[22px]">Total</span>
+                <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-1.5 pt-2.5 text-[18px]">
+                  <span className="font-display italic text-[22px]">Total</span>
                   <span className="font-mono tabular-nums">{formatCurrency(invoice.total)}</span>
                 </div>
               </div>
             </div>
 
             {invoice.notes && (
-              <div className="mt-7 pt-5 border-t border-dashed border-[var(--border-strong)] text-[12px] text-[var(--fg-muted)] leading-[1.6]">
+              <div className="mt-7 pt-5 border-t border-dashed border-(--border-strong) text-[12px] text-(--fg-muted) leading-[1.6]">
                 {invoice.notes}
               </div>
             )}

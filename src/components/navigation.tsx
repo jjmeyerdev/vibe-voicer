@@ -43,15 +43,15 @@ export function AppSidebar() {
     : "·"
 
   return (
-    <aside className="sticky top-0 h-screen w-[248px] flex flex-col p-3 border-r border-[var(--border)] bg-[var(--background)]">
+    <aside className="sticky top-0 h-screen w-[248px] flex flex-col p-3 border-r border-border bg-background">
       {/* Workspace switcher */}
-      <div className="flex items-center gap-2.5 p-2.5 rounded-[10px] border border-[var(--border)] mb-4 cursor-pointer hover:bg-[var(--bg-sunken)] transition-colors">
+      <div className="flex items-center gap-2.5 p-2.5 rounded-[10px] border border-border mb-4 cursor-pointer hover:bg-(--bg-sunken) transition-colors">
         <Mark size={32} />
         <div className="flex-1 min-w-0">
           <div className="text-[13px] font-semibold truncate">{session?.user?.name ?? "Workspace"}</div>
-          <div className="text-[11px] text-[var(--fg-muted)]">Pro plan</div>
+          <div className="text-[11px] text-(--fg-muted)">Pro plan</div>
         </div>
-        <ChevronDown className="h-3.5 w-3.5 text-[var(--fg-subtle)]" />
+        <ChevronDown className="h-3.5 w-3.5 text-(--fg-subtle)" />
       </div>
 
       {/* Nav */}
@@ -66,8 +66,8 @@ export function AppSidebar() {
               className={cn(
                 "flex items-center gap-2.5 px-2.5 py-2 rounded-[6px] text-[13px] transition-colors duration-[120ms]",
                 active
-                  ? "bg-[var(--bg-sunken)] text-foreground font-medium"
-                  : "text-[var(--fg-muted)] hover:bg-[var(--bg-sunken)] hover:text-foreground"
+                  ? "bg-(--bg-sunken) text-foreground font-medium"
+                  : "text-(--fg-muted) hover:bg-(--bg-sunken) hover:text-foreground"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -78,21 +78,21 @@ export function AppSidebar() {
       </nav>
 
       {/* Footer: profile */}
-      <div className="flex flex-col gap-3.5 pt-3.5 border-t border-[var(--border)]">
+      <div className="flex flex-col gap-3.5 pt-3.5 border-t border-border">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2.5 text-left">
               <div
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--ink-900)] dark:bg-[var(--ink-50)] text-[var(--ink-50)] dark:text-[var(--ink-900)] text-[11px] font-semibold tracking-[0.04em]"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-ink-900 dark:bg-ink-50 text-ink-50 dark:text-ink-900 text-[11px] font-semibold tracking-[0.04em]"
                 aria-hidden
               >
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[12px] font-medium truncate">{session?.user?.name ?? "—"}</div>
-                <div className="text-[11px] text-[var(--fg-muted)] truncate">{session?.user?.email ?? ""}</div>
+                <div className="text-[11px] text-(--fg-muted) truncate">{session?.user?.email ?? ""}</div>
               </div>
-              <ChevronDown className="h-3.5 w-3.5 text-[var(--fg-subtle)]" />
+              <ChevronDown className="h-3.5 w-3.5 text-(--fg-subtle)" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-[12rem]">

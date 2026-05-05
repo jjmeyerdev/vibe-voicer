@@ -44,7 +44,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "border-t border-[var(--border-strong)] font-medium",
+        "border-t border-(--border-strong) font-medium",
         className
       )}
       {...props}
@@ -57,7 +57,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "transition-[background-color] duration-[120ms] [tbody_&:hover]:bg-[var(--bg-sunken)] data-[state=selected]:bg-[var(--bg-sunken)]",
+        "transition-[background-color] duration-[120ms] [tbody_&:hover]:bg-(--bg-sunken) data-[state=selected]:bg-(--bg-sunken)",
         className
       )}
       {...props}
@@ -70,7 +70,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "text-left font-semibold text-[11px] uppercase tracking-[0.08em] text-[var(--fg-muted)] px-3.5 py-2.5 border-b border-[var(--border-strong)] whitespace-nowrap align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-left font-semibold text-[11px] uppercase tracking-[0.08em] text-(--fg-muted) px-3.5 py-2.5 border-b border-(--border-strong) whitespace-nowrap align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props}
@@ -83,7 +83,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "px-3.5 py-3 align-middle border-b border-[var(--border)] whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] [&[data-num='true']]:font-mono [&[data-num='true']]:tabular-nums [&[data-num='true']]:text-right",
+        "px-3.5 py-3 align-middle border-b border-border whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] [&[data-num='true']]:font-mono [&[data-num='true']]:tabular-nums [&[data-num='true']]:text-right",
         className
       )}
       {...props}
@@ -98,7 +98,7 @@ function TableCaption({
   return (
     <caption
       data-slot="table-caption"
-      className={cn("text-[var(--fg-muted)] mt-4 text-[12px]", className)}
+      className={cn("text-(--fg-muted) mt-4 text-[12px]", className)}
       {...props}
     />
   )
