@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -60,10 +60,6 @@ export default function EditInvoicePage() {
   const invoiceId = params.id as string
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
-  const [subtotal, setSubtotal] = useState(0)
-  const [discountAmount, setDiscountAmount] = useState(0)
-  const [taxAmount, setTaxAmount] = useState(0)
-  const [total, setTotal] = useState(0)
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
 
   const form = useForm<InvoiceFormData>({
@@ -82,10 +78,24 @@ export default function EditInvoicePage() {
   })
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" })
-  const watchedItems = form.watch("items")
-  const watchedTaxRate = form.watch("taxRate")
-  const watchedDiscountType = form.watch("discountType")
-  const watchedDiscountValue = form.watch("discountValue")
+  const watchedItems = useWatch({ control: form.control, name: "items" })
+  const watchedTaxRate = useWatch({ control: form.control, name: "taxRate" })
+  const watchedDiscountType = useWatch({ control: form.control, name: "discountType" })
+  const watchedDiscountValue = useWatch({ control: form.control, name: "discountValue" })
+
+  const items = watchedItems ?? []
+  const subtotal = items.reduce(
+    (sum, item) => sum + (item.quantity || 0) * (item.unitPrice || 0),
+    0,
+  )
+  const discountAmount =
+    watchedDiscountValue && watchedDiscountValue > 0
+      ? watchedDiscountType === "PERCENTAGE"
+        ? (subtotal * watchedDiscountValue) / 100
+        : watchedDiscountValue
+      : 0
+  const taxAmount = ((subtotal - discountAmount) * (watchedTaxRate || 0)) / 100
+  const total = subtotal - discountAmount + taxAmount
 
   useEffect(() => {
     const load = async () => {
@@ -125,24 +135,6 @@ export default function EditInvoicePage() {
     }
     if (invoiceId) load()
   }, [invoiceId, form])
-
-  useEffect(() => {
-    const items = watchedItems ?? []
-    const newSubtotal = items.reduce((sum, item) => sum + (item.quantity || 0) * (item.unitPrice || 0), 0)
-    let newDiscount = 0
-    if (watchedDiscountValue && watchedDiscountValue > 0) {
-      newDiscount =
-        watchedDiscountType === "PERCENTAGE"
-          ? (newSubtotal * watchedDiscountValue) / 100
-          : watchedDiscountValue
-    }
-    const afterDiscount = newSubtotal - newDiscount
-    const newTax = (afterDiscount * (watchedTaxRate || 0)) / 100
-    setSubtotal(newSubtotal)
-    setDiscountAmount(newDiscount)
-    setTaxAmount(newTax)
-    setTotal(afterDiscount + newTax)
-  }, [watchedItems, watchedTaxRate, watchedDiscountType, watchedDiscountValue])
 
   const onSubmit = async (data: InvoiceFormData) => {
     try {
