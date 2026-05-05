@@ -1,22 +1,17 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AuthShell } from "@/components/auth-shell"
 
 function CheckEmailContent() {
-  const [email, setEmail] = useState("")
+  const searchParams = useSearchParams()
+  const email = searchParams.get("email") ?? ""
   const [isResending, setIsResending] = useState(false)
   const [resendSuccess, setResendSuccess] = useState(false)
   const [resendError, setResendError] = useState("")
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    const emailParam = searchParams.get("email")
-    if (emailParam) setEmail(emailParam)
-  }, [searchParams])
 
   const handleResendEmail = async () => {
     if (!email) return

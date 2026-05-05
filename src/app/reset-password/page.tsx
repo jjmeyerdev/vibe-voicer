@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -10,25 +10,25 @@ import { toast } from "sonner"
 import { AuthShell } from "@/components/auth-shell"
 
 function ResetPasswordForm() {
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [status, setStatus] = useState<"form" | "success" | "error">("form")
-  const [message, setMessage] = useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const error = searchParams.get("error")
 
-  useEffect(() => {
-    if (error === "INVALID_TOKEN") {
-      setStatus("error")
-      setMessage("That reset link is expired or invalid.")
-    } else if (!token) {
-      setStatus("error")
-      setMessage("No reset token in the URL.")
-    }
-  }, [token, error])
+  const initialMessage =
+    error === "INVALID_TOKEN"
+      ? "That reset link is expired or invalid."
+      : !token
+        ? "No reset token in the URL."
+        : ""
+
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [status, setStatus] = useState<"form" | "success" | "error">(
+    initialMessage ? "error" : "form",
+  )
+  const [message, setMessage] = useState(initialMessage)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

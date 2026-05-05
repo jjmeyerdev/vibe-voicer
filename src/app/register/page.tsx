@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -10,18 +10,15 @@ import { signUp, signIn } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { AuthShell } from "@/components/auth-shell"
 import { getEnabledOAuthProviders } from "@/lib/oauth-config"
+import { useIsClient } from "@/lib/use-is-client"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
+  const isMounted = useIsClient()
   const router = useRouter()
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

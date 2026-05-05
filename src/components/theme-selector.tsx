@@ -3,14 +3,11 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useIsClient } from "@/lib/use-is-client"
 
 export function ThemeSelector() {
   const { setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useIsClient()
 
   const isDark = mounted && resolvedTheme === "dark"
 

@@ -8,24 +8,25 @@ import { toast } from "sonner"
 import { AuthShell } from "@/components/auth-shell"
 
 function VerifyEmailForm() {
-  const [status, setStatus] = useState<"loading" | "success" | "error" | "invalid">("loading")
-  const [message, setMessage] = useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const error = searchParams.get("error")
 
+  const initialStatus: "loading" | "success" | "error" | "invalid" =
+    error === "invalid_token" ? "invalid" : !token ? "error" : "loading"
+  const initialMessage =
+    error === "invalid_token"
+      ? "That verification link is invalid or expired."
+      : !token
+        ? "No verification token in the URL."
+        : ""
+
+  const [status, setStatus] = useState<"loading" | "success" | "error" | "invalid">(initialStatus)
+  const [message, setMessage] = useState(initialMessage)
+
   useEffect(() => {
-    if (error === "invalid_token") {
-      setStatus("invalid")
-      setMessage("That verification link is invalid or expired.")
-      return
-    }
-    if (!token) {
-      setStatus("error")
-      setMessage("No verification token in the URL.")
-      return
-    }
+    if (!token || error === "invalid_token") return
     const verifyEmail = async () => {
       try {
         const response = await fetch("/api/verify-email", {
