@@ -160,7 +160,7 @@ export default function NewInvoicePage() {
 
   return (
     <ProtectedLayout>
-      <div className="flex flex-col gap-4 max-w-[920px]">
+      <div className="flex flex-col gap-4 max-w-230">
         <div className="flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
             <Link href="/invoices">
@@ -459,7 +459,7 @@ export default function NewInvoicePage() {
                     </div>
                   )}
                   <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-2 pt-2.5 text-[18px]">
-                    <span className="font-display italic text-[22px]">Total</span>
+                    <span className="font-(--font-display) italic text-[22px]">Total</span>
                     <span className="font-mono tabular-nums">{formatCurrency(total)}</span>
                   </div>
                 </div>

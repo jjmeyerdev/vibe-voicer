@@ -101,7 +101,7 @@ export default function PublicInvoicePage() {
   if (error || !invoice) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 text-center gap-4">
-        <div className="font-display italic text-[40px]">No invoice here.</div>
+        <div className="font-(--font-display) italic text-[40px]">No invoice here.</div>
         <p className="text-(--fg-muted) text-[14px] max-w-md">
           That share link is wrong, expired, or the invoice was deleted.
         </p>
@@ -114,7 +114,7 @@ export default function PublicInvoicePage() {
 
   return (
     <div className="min-h-screen bg-(--bg-sunken)">
-      <header className="flex items-center justify-between px-7 py-5 max-w-[920px] mx-auto">
+      <header className="flex items-center justify-between px-7 py-5 max-w-230 mx-auto">
         <Wordmark size="md" />
         <div className="flex items-center gap-2">
           <ThemeSelector />
@@ -127,12 +127,12 @@ export default function PublicInvoicePage() {
         </div>
       </header>
 
-      <main className="bg-background max-w-[920px] mx-auto px-12 py-12 border border-border rounded-none mb-16 shadow-(--shadow-raised)">
+      <main className="bg-background max-w-230 mx-auto px-12 py-12 border border-border rounded-none mb-16 shadow-(--shadow-raised)">
         {/* Top meta */}
         <div className="flex justify-between items-start gap-6 mb-9">
           <div>
             <div className="t-overline">Invoice</div>
-            <h1 className="font-display text-[64px] leading-[1.0] tracking-[-0.02em] mt-1">
+            <h1 className="font-(--font-display) text-[64px] leading-none tracking-[-0.02em] mt-1">
               <span className="font-mono text-[40px] tracking-[0]">{invoice.invoiceNumber}</span>
             </h1>
             <div className="text-[12px] text-(--fg-muted) mt-1.5">
@@ -177,8 +177,8 @@ export default function PublicInvoicePage() {
               <tr>
                 <th className="text-left t-overline pb-2 border-b border-border">Description</th>
                 <th className="text-right t-overline pb-2 border-b border-border w-[70px]">Qty</th>
-                <th className="text-right t-overline pb-2 border-b border-border w-[120px]">Rate</th>
-                <th className="text-right t-overline pb-2 border-b border-border w-[140px]">Amount</th>
+                <th className="text-right t-overline pb-2 border-b border-border w-30">Rate</th>
+                <th className="text-right t-overline pb-2 border-b border-border w-35">Amount</th>
               </tr>
             </thead>
             <tbody>
@@ -202,7 +202,7 @@ export default function PublicInvoicePage() {
 
         {/* Totals */}
         <div className="flex justify-end mb-3">
-          <div className="w-[300px] flex flex-col gap-1.5 text-[13px]">
+          <div className="w-75 flex flex-col gap-1.5 text-[13px]">
             {invoice.subtotal !== undefined && (
               <div className="flex justify-between">
                 <span>Subtotal</span>
@@ -227,7 +227,7 @@ export default function PublicInvoicePage() {
               </div>
             )}
             <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-1.5 pt-2.5 text-[18px]">
-              <span className="font-display italic text-[22px]">Total due</span>
+              <span className="font-(--font-display) italic text-[22px]">Total due</span>
               <span className="font-mono tabular-nums">{formatCurrency(invoice.total)}</span>
             </div>
           </div>

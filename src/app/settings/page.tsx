@@ -140,7 +140,7 @@ export default function SettingsPage() {
 
   return (
     <ProtectedLayout>
-      <div className="max-w-[920px]">
+      <div className="max-w-230">
         <Tabs defaultValue="personal">
           <TabsList>
             <TabsTrigger value="personal">Personal</TabsTrigger>
@@ -262,7 +262,7 @@ export default function SettingsPage() {
               <p className="text-[12px] text-(--fg-muted) mt-0.5 mb-6">
                 We&rsquo;ll sign you out of other sessions when you change it.
               </p>
-              <div className="flex flex-col gap-4 max-w-[420px]">
+              <div className="flex flex-col gap-4 max-w-105">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="currentPassword">Current password</Label>
                   <Input

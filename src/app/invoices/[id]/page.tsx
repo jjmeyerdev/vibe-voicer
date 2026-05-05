@@ -110,7 +110,7 @@ export default function InvoiceDetailPage() {
   if (loading) {
     return (
       <ProtectedLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center justify-center min-h-100">
           <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
@@ -120,8 +120,8 @@ export default function InvoiceDetailPage() {
   if (!invoice) {
     return (
       <ProtectedLayout>
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-display italic text-[40px]">Not here.</div>
+        <div className="flex flex-col items-center justify-center min-h-100 text-center gap-4">
+          <div className="font-(--font-display) italic text-[40px]">Not here.</div>
           <p className="text-(--fg-muted)">That invoice doesn’t exist or was deleted.</p>
           <Button asChild>
             <Link href="/invoices">← Back to invoices</Link>
@@ -234,7 +234,7 @@ export default function InvoiceDetailPage() {
               </div>
               <div>
                 <div className="t-overline">Bill to</div>
-                <div className="font-display text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
+                <div className="font-(--font-display) text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
                 <div className="text-[12px] text-(--fg-muted) mt-1 leading-[1.5]">
                   {invoice.client.email}
                   {invoice.client.phone && (
@@ -259,9 +259,9 @@ export default function InvoiceDetailPage() {
               <thead>
                 <tr>
                   <th className="text-left t-overline pb-2 border-b border-border">Description</th>
-                  <th className="text-right t-overline pb-2 border-b border-border w-[60px]">Qty</th>
-                  <th className="text-right t-overline pb-2 border-b border-border w-[120px]">Rate</th>
-                  <th className="text-right t-overline pb-2 border-b border-border w-[140px]">Amount</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-15">Qty</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-30">Rate</th>
+                  <th className="text-right t-overline pb-2 border-b border-border w-35">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -277,7 +277,7 @@ export default function InvoiceDetailPage() {
             </table>
 
             <div className="flex justify-end mt-5">
-              <div className="w-[280px] flex flex-col gap-1.5 text-[13px]">
+              <div className="w-70 flex flex-col gap-1.5 text-[13px]">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="font-mono tabular-nums">{formatCurrency(invoice.subtotal)}</span>
@@ -289,7 +289,7 @@ export default function InvoiceDetailPage() {
                   </div>
                 )}
                 <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-1.5 pt-2.5 text-[18px]">
-                  <span className="font-display italic text-[22px]">Total</span>
+                  <span className="font-(--font-display) italic text-[22px]">Total</span>
                   <span className="font-mono tabular-nums">{formatCurrency(invoice.total)}</span>
                 </div>
               </div>

@@ -146,7 +146,7 @@ export default function InvoicesPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-[280px]">
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-70">
               <Search className="h-3.5 w-3.5" />
               <input
                 type="search"
@@ -189,7 +189,7 @@ export default function InvoicesPage() {
               ) : filtered.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
-                    <div className="font-display italic text-[24px] mb-2">No invoices yet.</div>
+                    <div className="font-(--font-display) italic text-[24px] mb-2">No invoices yet.</div>
                     <Button asChild>
                       <Link href="/invoices/new">Create your first invoice</Link>
                     </Button>

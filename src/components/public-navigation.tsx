@@ -14,7 +14,7 @@ const links = [
 export function PublicNavigation() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--background)_80%,transparent)] backdrop-blur-[12px]">
-      <div className="mx-auto max-w-[1280px] px-12 py-3.5 flex items-center justify-between gap-6">
+      <div className="mx-auto max-w-320 px-12 py-3.5 flex items-center justify-between gap-6">
         <Link href="/" aria-label="Vibe Voicer home" className="flex items-center">
           <Wordmark size="lg" />
         </Link>

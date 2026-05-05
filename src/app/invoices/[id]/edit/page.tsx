@@ -185,7 +185,7 @@ export default function EditInvoicePage() {
   if (loading) {
     return (
       <ProtectedLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center justify-center min-h-100">
           <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
@@ -195,8 +195,8 @@ export default function EditInvoicePage() {
   if (!invoice) {
     return (
       <ProtectedLayout>
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-display italic text-[40px]">Not here.</div>
+        <div className="flex flex-col items-center justify-center min-h-100 text-center gap-4">
+          <div className="font-(--font-display) italic text-[40px]">Not here.</div>
           <Button asChild>
             <Link href="/invoices">← Back to invoices</Link>
           </Button>
@@ -207,7 +207,7 @@ export default function EditInvoicePage() {
 
   return (
     <ProtectedLayout title={`Edit ${invoice.invoiceNumber}`} subtitle="Tweak the details, save when ready.">
-      <div className="flex flex-col gap-4 max-w-[920px]">
+      <div className="flex flex-col gap-4 max-w-230">
         <div className="flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
             <Link href={`/invoices/${invoiceId}`}>
@@ -494,7 +494,7 @@ export default function EditInvoicePage() {
                     </div>
                   )}
                   <div className="flex justify-between border-t border-ink-900 dark:border-foreground mt-2 pt-2.5 text-[18px]">
-                    <span className="font-display italic text-[22px]">Total</span>
+                    <span className="font-(--font-display) italic text-[22px]">Total</span>
                     <span className="font-mono tabular-nums">{formatCurrency(total)}</span>
                   </div>
                 </div>

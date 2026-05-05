@@ -124,7 +124,7 @@ export default function DashboardPage() {
           <header className="flex justify-between items-end mb-4">
             <div>
               <div className="t-overline">Activity</div>
-              <h3 className="font-display text-[22px] leading-[1.1] mt-1">What just happened</h3>
+              <h3 className="font-(--font-display) text-[22px] leading-[1.1] mt-1">What just happened</h3>
             </div>
             <Button asChild variant="ghost" size="sm">
               <Link href="/invoices">View all →</Link>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
             </ul>
           ) : (
             <div className="py-12 text-center">
-              <div className="font-display italic text-[24px] mb-2">No invoices yet.</div>
+              <div className="font-(--font-display) italic text-[24px] mb-2">No invoices yet.</div>
               <Button asChild size="default">
                 <Link href="/invoices/new">Create your first invoice</Link>
               </Button>
@@ -179,8 +179,8 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-(--bg-sunken) rounded-[12px] p-5 mt-2">
-            <div className="font-display italic text-[40px] leading-none text-(--fg-subtle)">&ldquo;</div>
-            <div className="font-display italic text-[20px] leading-[1.3] mt-1.5 mb-3">
+            <div className="font-(--font-display) italic text-[40px] leading-none text-(--fg-subtle)">&ldquo;</div>
+            <div className="font-(--font-display) italic text-[20px] leading-[1.3] mt-1.5 mb-3">
               Thursdays. People pay on Thursdays.
             </div>
             <div className="text-[11px] text-(--fg-muted)">— from your last 90 days</div>

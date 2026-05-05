@@ -71,7 +71,7 @@ export default function ClientsPage() {
     <ProtectedLayout>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-[280px]">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-[8px] border border-border bg-background text-(--fg-muted) w-70">
             <Search className="h-3.5 w-3.5" />
             <input
               type="search"
@@ -112,7 +112,7 @@ export default function ClientsPage() {
               ) : filtered.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
-                    <div className="font-display italic text-[24px] mb-2">No clients yet.</div>
+                    <div className="font-(--font-display) italic text-[24px] mb-2">No clients yet.</div>
                     <Button asChild>
                       <Link href="/clients/new">Add your first client</Link>
                     </Button>

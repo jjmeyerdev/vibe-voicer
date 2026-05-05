@@ -71,7 +71,7 @@ export default function ClientDetailPage() {
   if (loading) {
     return (
       <ProtectedLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center justify-center min-h-100">
           <div className="h-px w-24 bg-ink-300 dark:bg-ink-700 animate-pulse" />
         </div>
       </ProtectedLayout>
@@ -81,8 +81,8 @@ export default function ClientDetailPage() {
   if (!client) {
     return (
       <ProtectedLayout>
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center gap-4">
-          <div className="font-display italic text-[40px]">Not here.</div>
+        <div className="flex flex-col items-center justify-center min-h-100 text-center gap-4">
+          <div className="font-(--font-display) italic text-[40px]">Not here.</div>
           <p className="text-(--fg-muted)">That client doesn’t exist or was deleted.</p>
           <Button asChild>
             <Link href="/clients">← Back to clients</Link>
@@ -188,7 +188,7 @@ export default function ClientDetailPage() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
-                    <div className="font-display italic text-[20px] mb-2">No invoices yet.</div>
+                    <div className="font-(--font-display) italic text-[20px] mb-2">No invoices yet.</div>
                     <Button asChild>
                       <Link href="/invoices/new">Create the first one</Link>
                     </Button>

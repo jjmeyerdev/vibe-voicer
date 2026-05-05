@@ -43,7 +43,7 @@ export function AppSidebar() {
     : "·"
 
   return (
-    <aside className="sticky top-0 h-screen w-[248px] flex flex-col p-3 border-r border-border bg-background">
+    <aside className="sticky top-0 h-screen w-62 flex flex-col p-3 border-r border-border bg-background">
       {/* Workspace switcher */}
       <div className="flex items-center gap-2.5 p-2.5 rounded-[10px] border border-border mb-4 cursor-pointer hover:bg-(--bg-sunken) transition-colors">
         <Mark size={32} />
@@ -95,7 +95,7 @@ export function AppSidebar() {
               <ChevronDown className="h-3.5 w-3.5 text-(--fg-subtle)" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[12rem]">
+          <DropdownMenuContent align="end" className="min-w-48">
             <DropdownMenuItem asChild>
               <Link href="/settings">
                 <Settings className="h-4 w-4" />

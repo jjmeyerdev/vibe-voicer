@@ -44,30 +44,30 @@ export default function FeaturesPage() {
       <PublicNavigation />
 
       <section className="px-12 py-20">
-        <div className="mx-auto max-w-[1100px] mb-10">
+        <div className="mx-auto max-w-275 mb-10">
           <div className="t-overline">Features</div>
-          <h1 className="font-display text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 max-w-[820px]">
+          <h1 className="font-(--font-display) text-[64px] leading-[1.05] tracking-[-0.02em] mt-2 max-w-205">
             The boring parts, <em className="italic">handled</em>.
           </h1>
-          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-[640px]">
+          <p className="mt-4 text-[18px] text-(--fg-muted) max-w-160">
             Everything Vibe Voicer does, in one read. Nothing here is optional bloat — it&rsquo;s all the stuff you would&rsquo;ve duct-taped together yourself.
           </p>
         </div>
 
-        <div className="mx-auto max-w-[1100px] grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+        <div className="mx-auto max-w-275 grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
           {features.map((it) => (
             <div
               key={it.k}
               className="bg-(--bg-elevated) border border-border rounded-[16px] p-7 hover:border-(--border-strong) transition-colors"
             >
               <div className="font-mono text-[12px] text-(--fg-subtle) mb-4">{it.k}</div>
-              <div className="font-display text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
-              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-[460px]">{it.b}</div>
+              <div className="font-(--font-display) text-[28px] leading-[1.1] mb-2.5">{it.h}</div>
+              <div className="text-[14px] text-(--fg-muted) leading-[1.55] max-w-115">{it.b}</div>
             </div>
           ))}
         </div>
 
-        <div className="mx-auto max-w-[1100px] flex flex-wrap items-center gap-3">
+        <div className="mx-auto max-w-275 flex flex-wrap items-center gap-3">
           <Button asChild size="lg">
             <Link href="/register">Start free — no card</Link>
           </Button>
