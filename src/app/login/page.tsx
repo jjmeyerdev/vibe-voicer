@@ -25,11 +25,16 @@ export default function LoginPage() {
 
     try {
       const { error } = await signIn.email({ email, password })
-      if (error) throw error
+      if (error) {
+        const message =
+          (error as { message?: string }).message ??
+          "Couldn’t sign in. Check the address and try again."
+        throw new Error(message)
+      }
       toast.success("Welcome back.")
       router.push("/dashboard")
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Couldn’t sign in. Check the address and try again."
+      const message = error instanceof Error ? error.message : "Something went sideways."
       toast.error(message)
     } finally {
       setIsLoading(false)
@@ -40,9 +45,14 @@ export default function LoginPage() {
     setIsLoading(true)
     try {
       const { error } = await signIn.social({ provider, callbackURL: "/dashboard" })
-      if (error) throw error
+      if (error) {
+        const message =
+          (error as { message?: string }).message ??
+          `Couldn’t sign in with ${provider}.`
+        throw new Error(message)
+      }
     } catch (error) {
-      const message = error instanceof Error ? error.message : `Couldn’t sign in with ${provider}.`
+      const message = error instanceof Error ? error.message : "Something went sideways."
       toast.error(message)
     } finally {
       setIsLoading(false)
