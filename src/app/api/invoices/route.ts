@@ -1,6 +1,23 @@
+import { randomUUID } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { Prisma, type DiscountType, type InvoiceStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+
+type IncomingItem = {
+  description?: unknown
+  quantity?: unknown
+  unitPrice?: unknown
+}
+
+const toNumber = (value: unknown, fallback = 0): number => {
+  if (typeof value === "number" && Number.isFinite(value)) return value
+  if (typeof value === "string") {
+    const parsed = parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : fallback
+  }
+  return fallback
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,9 +29,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const clientId = request.nextUrl.searchParams.get("clientId")
+
     const invoices = await db.invoice.findMany({
       where: {
         userId: session.user.id,
+        ...(clientId ? { clientId } : {}),
       },
       include: {
         client: true,
@@ -26,7 +46,6 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Convert Decimal fields to numbers for JSON serialization
     const serializedInvoices = invoices.map(invoice => ({
       ...invoice,
       subtotal: Number(invoice.subtotal),
@@ -68,76 +87,121 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    
+
     const {
       clientId,
-      invoiceNumber,
-      publicSlug,
       status,
       issueDate,
       dueDate,
-      subtotal,
       discountType,
       discountValue,
-      discountAmount,
       taxRate,
-      taxAmount,
-      total,
       notes,
       paymentTerms,
       items,
-    } = body
+    } = body as {
+      clientId?: string
+      status?: InvoiceStatus
+      issueDate?: string
+      dueDate?: string
+      discountType?: DiscountType
+      discountValue?: unknown
+      taxRate?: unknown
+      notes?: string
+      paymentTerms?: string
+      items?: IncomingItem[]
+    }
 
-    // Generate invoice number if not provided
-    const finalInvoiceNumber = invoiceNumber || `INV-${Date.now()}`
+    if (!clientId || typeof clientId !== "string") {
+      return NextResponse.json({ error: "Client is required" }, { status: 400 })
+    }
+    if (!issueDate) {
+      return NextResponse.json({ error: "Issue date is required" }, { status: 400 })
+    }
 
-    // Generate public slug if not provided
-    const finalPublicSlug = publicSlug || `inv-${Date.now()}`
+    const clientOwned = await db.client.findFirst({
+      where: { id: clientId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!clientOwned) {
+      return NextResponse.json({ error: "Client not found" }, { status: 404 })
+    }
 
-    const invoice = await db.invoice.create({
-      data: {
-        userId: session.user.id,
-        clientId,
-        invoiceNumber: finalInvoiceNumber,
-        publicSlug: finalPublicSlug,
-        status: (status as any) || "DRAFT",
-        issueDate: new Date(issueDate),
-        dueDate: dueDate ? new Date(dueDate) : new Date(issueDate), // Use issue date as due date if not provided
-        subtotal: subtotal || 0,
-        discountType: (discountType as any) || "PERCENTAGE",
-        discountValue: discountValue || 0,
-        discountAmount: discountAmount || 0,
-        taxRate: taxRate || 0,
-        taxAmount: taxAmount || 0,
-        total: total || 0,
-        notes,
-        paymentTerms,
-        items: {
-          create: items?.map((item: any) => ({
-            description: item.description,
-            quantity: item.quantity || 1,
-            unitPrice: item.unitPrice || 0,
-            total: item.total || 0,
-          })) || [],
+    const itemRows = (items ?? []).map(item => {
+      const quantity = toNumber(item.quantity, 1)
+      const unitPrice = toNumber(item.unitPrice, 0)
+      return {
+        description: typeof item.description === "string" ? item.description : "",
+        quantity,
+        unitPrice,
+        total: quantity * unitPrice,
+      }
+    })
+
+    const subtotal = itemRows.reduce((sum, item) => sum + item.total, 0)
+    const discountTypeFinal: DiscountType = discountType ?? "PERCENTAGE"
+    const discountValueNum = toNumber(discountValue, 0)
+    const discountAmount =
+      discountValueNum > 0
+        ? discountTypeFinal === "PERCENTAGE"
+          ? (subtotal * discountValueNum) / 100
+          : discountValueNum
+        : 0
+    const taxRateNum = toNumber(taxRate, 0)
+    const taxAmount = ((subtotal - discountAmount) * taxRateNum) / 100
+    const total = subtotal - discountAmount + taxAmount
+
+    const invoice = await db.$transaction(async tx => {
+      const settings = await tx.settings.upsert({
+        where: { userId: session.user.id },
+        update: { nextInvoiceNumber: { increment: 1 } },
+        create: { userId: session.user.id, nextInvoiceNumber: 2 },
+      })
+      const number = settings.nextInvoiceNumber - 1
+      const invoiceNumber = `${settings.invoicePrefix}-${number.toString().padStart(4, "0")}`
+
+      return tx.invoice.create({
+        data: {
+          userId: session.user.id,
+          clientId,
+          invoiceNumber,
+          publicSlug: randomUUID(),
+          status: status ?? "DRAFT",
+          issueDate: new Date(issueDate),
+          dueDate: dueDate ? new Date(dueDate) : new Date(issueDate),
+          subtotal,
+          discountType: discountTypeFinal,
+          discountValue: discountValueNum,
+          discountAmount,
+          taxRate: taxRateNum,
+          taxAmount,
+          total,
+          notes,
+          paymentTerms,
+          items: { create: itemRows },
         },
-      },
-      include: {
-        client: true,
-        items: true,
-        payments: true,
-      },
+        include: {
+          client: true,
+          items: true,
+          payments: true,
+        },
+      })
     })
 
     return NextResponse.json(invoice, { status: 201 })
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return NextResponse.json(
+        { error: "Invoice number collision — please retry" },
+        { status: 409 }
+      )
+    }
     console.error("Error creating invoice:", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined
-    })
     return NextResponse.json(
-      { error: "Failed to create invoice", details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: "Failed to create invoice" },
       { status: 500 }
     )
   }

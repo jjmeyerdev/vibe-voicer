@@ -49,18 +49,21 @@ export default function ClientsPage() {
   )
 
   const handleDelete = async (clientId: string) => {
-    if (!confirm("Delete this client? Their invoices stay.")) return
+    if (!confirm("Delete this client? Only works if they have no invoices.")) return
     try {
       const response = await fetch(`/api/clients/${clientId}`, {
         method: "DELETE",
         credentials: "include",
       })
-      if (!response.ok) throw new Error("delete failed")
+      if (!response.ok) {
+        const data = (await response.json().catch(() => ({}))) as { error?: string }
+        throw new Error(data.error ?? "Couldn’t delete it.")
+      }
       setClients(clients.filter((c) => c.id !== clientId))
       toast.success("Client deleted.")
     } catch (error) {
-      console.error("Error deleting client:", error)
-      toast.error("Couldn’t delete it.")
+      const message = error instanceof Error ? error.message : "Couldn’t delete it."
+      toast.error(message)
     }
   }
 

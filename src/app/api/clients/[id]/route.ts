@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { InvoiceStatus } from "@prisma/client"
+import { InvoiceStatus, Prisma } from "@prisma/client"
 
 export async function GET(
   request: NextRequest,
@@ -144,9 +144,25 @@ export async function DELETE(
       return NextResponse.json({ error: "Client not found" }, { status: 404 })
     }
 
-    await db.client.delete({
-      where: { id },
-    })
+    try {
+      await db.client.delete({
+        where: { id },
+      })
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2003"
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "This client still has invoices. Delete or reassign them first.",
+          },
+          { status: 409 }
+        )
+      }
+      throw error
+    }
 
     return NextResponse.json({ message: "Client deleted successfully" })
   } catch (error) {

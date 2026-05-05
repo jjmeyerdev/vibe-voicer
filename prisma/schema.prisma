@@ -105,7 +105,7 @@ model Client {
 
 model Invoice {
   id           String        @id @default(cuid())
-  invoiceNumber String       @unique
+  invoiceNumber String
   publicSlug   String        @unique
   status       InvoiceStatus @default(DRAFT)
   issueDate    DateTime
@@ -126,10 +126,11 @@ model Invoice {
   userId       String
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   clientId     String
-  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Restrict)
   items        InvoiceItem[]
   payments     Payment[]
 
+  @@unique([userId, invoiceNumber])
   @@map("invoices")
 }
 
