@@ -205,10 +205,10 @@ export default function InvoiceDetailPage() {
               </Link>
             </Button>
             <Button size="default" asChild>
-              <Link href={`/api/invoices/${invoiceId}/pdf`}>
+              <a href={`/api/invoices/${invoiceId}/pdf`} download>
                 <Download className="h-3.5 w-3.5" />
                 Download PDF
-              </Link>
+              </a>
             </Button>
           </div>
         </div>

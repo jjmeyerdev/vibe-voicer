@@ -116,10 +116,13 @@ export default function PublicInvoicePage() {
         <div className="flex items-center gap-2">
           <ThemeSelector />
           <Button asChild variant="ghost" size="sm">
-            <Link href={`/api/invoices/public/${invoice.publicSlug}/pdf?style=color`}>
+            <a
+              href={`/api/invoices/public/${invoice.publicSlug}/pdf?style=color`}
+              download
+            >
               <Download className="h-3.5 w-3.5" />
               Download PDF
-            </Link>
+            </a>
           </Button>
         </div>
       </header>
@@ -269,8 +272,7 @@ export default function PublicInvoicePage() {
           </div>
         )}
 
-        <div className="mt-7 pt-5 border-t border-dashed border-(--border-strong) flex justify-between text-[12px] text-(--fg-muted)">
-          <span>Net 14.</span>
+        <div className="mt-7 pt-5 border-t border-dashed border-(--border-strong) flex justify-center text-[12px] text-(--fg-muted)">
           <span className="font-mono">Powered by Vibe Voicer</span>
         </div>
       </main>
