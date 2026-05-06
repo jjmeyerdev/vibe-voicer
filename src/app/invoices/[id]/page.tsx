@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import { formatCurrency, formatQuantity } from "@/lib/utils"
 import { formatInvoiceDate } from "@/lib/date"
 import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
+import { SendInvoiceDialog } from "@/components/send-invoice-dialog"
 
 type Invoice = {
   id: string
@@ -108,44 +109,7 @@ export default function InvoiceDetailPage() {
     toast.success("Public link copied.")
   }
 
-  const [sending, setSending] = useState(false)
-  const sendToClient = async () => {
-    if (!invoice || sending) return
-    setSending(true)
-    try {
-      const publicUrl = `${window.location.origin}/i/${invoice.publicSlug}`
-      // Flip status to SENT (no-op server-side if already SENT/VIEWED/PAID).
-      if (invoice.status === "DRAFT") {
-        const response = await fetch(`/api/invoices/${invoiceId}`, {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "SENT" }),
-        })
-        if (!response.ok) throw new Error("Couldn’t mark it sent.")
-        setInvoice({ ...invoice, status: "SENT" })
-      }
-      if (invoice.client.email) {
-        const subject = `Invoice ${invoice.invoiceNumber}`
-        const body =
-          `Hi ${invoice.client.name},\n\n` +
-          `Here's invoice ${invoice.invoiceNumber} for ${formatCurrency(invoice.total)}, ` +
-          `due ${formatInvoiceDate(invoice.dueDate, { dateStyle: "medium" })}.\n\n` +
-          `View and pay: ${publicUrl}\n\nThanks!`
-        window.location.href =
-          `mailto:${invoice.client.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-        toast.success("Marked as sent. Email draft opened.")
-      } else {
-        await navigator.clipboard.writeText(publicUrl).catch(() => {})
-        toast.success("Marked as sent. Public link copied — paste it to your client.")
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Couldn’t send."
-      toast.error(message)
-    } finally {
-      setSending(false)
-    }
-  }
+  const [sendOpen, setSendOpen] = useState(false)
 
   if (loading) {
     return (
@@ -253,11 +217,10 @@ export default function InvoiceDetailPage() {
                 variant="secondary"
                 size="sm"
                 className="justify-start"
-                onClick={sendToClient}
-                disabled={sending}
+                onClick={() => setSendOpen(true)}
               >
                 <Send className="h-3.5 w-3.5" />
-                {sending ? "Sending…" : invoice.status === "DRAFT" ? "Send to client" : "Email client"}
+                {invoice.status === "DRAFT" ? "Send to client" : "Email client"}
               </Button>
               <Button variant="ghost" size="sm" className="justify-start" onClick={copyPublicLink}>
                 <Copy className="h-3.5 w-3.5" />
@@ -354,6 +317,21 @@ export default function InvoiceDetailPage() {
           </section>
         </div>
       </div>
+
+      <SendInvoiceDialog
+        open={sendOpen}
+        onOpenChange={setSendOpen}
+        invoice={{
+          id: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+          publicSlug: invoice.publicSlug,
+          total: invoice.total,
+          dueDate: invoice.dueDate,
+          status: invoice.status,
+          client: { name: invoice.client.name, email: invoice.client.email },
+        }}
+        onSent={() => setInvoice({ ...invoice, status: "SENT" })}
+      />
     </ProtectedLayout>
   )
 }
