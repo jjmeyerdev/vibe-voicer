@@ -1,9 +1,9 @@
-import { randomUUID } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
-import { Prisma, type DiscountType, type InvoiceStatus } from "@prisma/client"
+import type { DiscountType, InvoiceStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { parseInvoiceDate } from "@/lib/date"
+import { createInvoice, InvoiceCreationError } from "@/lib/invoices"
 
 type IncomingItem = {
   description?: unknown
@@ -120,85 +120,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Issue date is required" }, { status: 400 })
     }
 
-    const clientOwned = await db.client.findFirst({
-      where: { id: clientId, userId: session.user.id },
-      select: { id: true },
-    })
-    if (!clientOwned) {
-      return NextResponse.json({ error: "Client not found" }, { status: 404 })
-    }
+    const itemInputs = (items ?? []).map(item => ({
+      description: typeof item.description === "string" ? item.description : "",
+      quantity: toNumber(item.quantity, 1),
+      unitPrice: toNumber(item.unitPrice, 0),
+    }))
 
-    const itemRows = (items ?? []).map(item => {
-      const quantity = toNumber(item.quantity, 1)
-      const unitPrice = toNumber(item.unitPrice, 0)
-      return {
-        description: typeof item.description === "string" ? item.description : "",
-        quantity,
-        unitPrice,
-        total: quantity * unitPrice,
-      }
-    })
-
-    const subtotal = itemRows.reduce((sum, item) => sum + item.total, 0)
-    const discountTypeFinal: DiscountType = discountType ?? "PERCENTAGE"
-    const discountValueNum = toNumber(discountValue, 0)
-    const discountAmount =
-      discountValueNum > 0
-        ? discountTypeFinal === "PERCENTAGE"
-          ? (subtotal * discountValueNum) / 100
-          : discountValueNum
-        : 0
-    const taxRateNum = toNumber(taxRate, 0)
-    const taxAmount = ((subtotal - discountAmount) * taxRateNum) / 100
-    const total = subtotal - discountAmount + taxAmount
-
-    const invoice = await db.$transaction(async tx => {
-      const settings = await tx.settings.upsert({
-        where: { userId: session.user.id },
-        update: { nextInvoiceNumber: { increment: 1 } },
-        create: { userId: session.user.id, nextInvoiceNumber: 2 },
-      })
-      const number = settings.nextInvoiceNumber - 1
-      const invoiceNumber = `${settings.invoicePrefix}-${number.toString().padStart(4, "0")}`
-
-      return tx.invoice.create({
-        data: {
-          userId: session.user.id,
-          clientId,
-          invoiceNumber,
-          publicSlug: randomUUID(),
-          status: status ?? "DRAFT",
-          issueDate: parseInvoiceDate(issueDate),
-          dueDate: dueDate ? parseInvoiceDate(dueDate) : parseInvoiceDate(issueDate),
-          subtotal,
-          discountType: discountTypeFinal,
-          discountValue: discountValueNum,
-          discountAmount,
-          taxRate: taxRateNum,
-          taxAmount,
-          total,
-          notes,
-          paymentTerms,
-          items: { create: itemRows },
-        },
-        include: {
-          client: true,
-          items: true,
-          payments: true,
-        },
-      })
+    const invoice = await createInvoice({
+      userId: session.user.id,
+      clientId,
+      status,
+      issueDate: parseInvoiceDate(issueDate),
+      dueDate: dueDate ? parseInvoiceDate(dueDate) : parseInvoiceDate(issueDate),
+      discountType,
+      discountValue: toNumber(discountValue, 0),
+      taxRate: toNumber(taxRate, 0),
+      notes,
+      paymentTerms,
+      items: itemInputs,
     })
 
     return NextResponse.json(invoice, { status: 201 })
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      return NextResponse.json(
-        { error: "Invoice number collision — please retry" },
-        { status: 409 }
-      )
+    if (error instanceof InvoiceCreationError) {
+      if (error.code === "CLIENT_NOT_FOUND") {
+        return NextResponse.json({ error: error.message }, { status: 404 })
+      }
+      if (error.code === "INVOICE_NUMBER_CONFLICT") {
+        return NextResponse.json({ error: error.message }, { status: 409 })
+      }
     }
     console.error("Error creating invoice:", error)
     return NextResponse.json(

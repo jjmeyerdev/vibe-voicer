@@ -3,6 +3,9 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { renderToBuffer } from "@react-pdf/renderer"
 import { SimpleInvoicePDF } from "@/components/simple-invoice-pdf"
+import { serializeInvoiceForPdf } from "@/lib/invoice-serialize"
+
+export const runtime = "nodejs"
 
 export async function GET(
   request: NextRequest,
@@ -41,38 +44,7 @@ export async function GET(
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 })
     }
 
-    const items = invoice.items.map(item => {
-      const quantity = Number(item.quantity)
-      const unitPrice = Number(item.unitPrice)
-      return {
-        ...item,
-        quantity,
-        unitPrice,
-        total: quantity * unitPrice,
-      }
-    })
-
-    const subtotal = items.reduce((sum, item) => sum + item.total, 0)
-    const taxRate = Number(invoice.taxRate)
-    const taxAmount = subtotal * (taxRate / 100)
-    const total = subtotal + taxAmount
-
-    const serializedInvoice = {
-      ...invoice,
-      subtotal,
-      discountValue: Number(invoice.discountValue),
-      discountAmount: Number(invoice.discountAmount),
-      taxRate,
-      taxAmount,
-      total,
-      items,
-      logo: invoice.user?.settings?.logo || null,
-      user: {
-        name: invoice.user?.name || "Your Company",
-        email: invoice.user?.email || "your@email.com",
-        settings: invoice.user?.settings || null,
-      },
-    }
+    const serializedInvoice = serializeInvoiceForPdf(invoice)
 
     const buffer = await renderToBuffer(
       <SimpleInvoicePDF invoice={serializedInvoice} />

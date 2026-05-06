@@ -5,8 +5,14 @@
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
+    },
+    "src/app/api/**/*.tsx": {
+      "maxDuration": 60
     }
   },
+  "crons": [
+    { "path": "/api/cron/recurring-invoice", "schedule": "0 13 1 * *" }
+  ],
   "env": {
     "PRISMA_GENERATE_DATAPROXY": "true"
   }
