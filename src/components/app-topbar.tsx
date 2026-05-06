@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeSelector } from "@/components/theme-selector"
 
 type AppTopbarProps = {
   title: string
@@ -28,7 +27,6 @@ export function AppTopbar({ title, subtitle }: AppTopbarProps) {
           />
           <kbd className="font-mono text-[10px] text-(--fg-muted) border border-border px-1.5 py-0.5 rounded-[4px] bg-background">⌘K</kbd>
         </div>
-        <ThemeSelector />
         <Button asChild size="default">
           <Link href="/invoices/new">
             <Plus className="h-4 w-4" />
