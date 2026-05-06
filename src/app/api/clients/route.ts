@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId: session.user.id,
         name,
-        email,
+        email: email ? email : null,
         phone,
         address,
         city,

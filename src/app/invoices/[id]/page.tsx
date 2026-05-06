@@ -19,7 +19,7 @@ type Invoice = {
   dueDate: string
   client: {
     name: string
-    email: string
+    email: string | null
     phone: string
     address: string
     city: string
@@ -236,7 +236,12 @@ export default function InvoiceDetailPage() {
                 <div className="t-overline">Bill to</div>
                 <div className="font-(--font-display) text-[22px] leading-[1.1] mt-1.5">{invoice.client.name}</div>
                 <div className="text-[12px] text-(--fg-muted) mt-1 leading-[1.5]">
-                  {invoice.client.email}
+                  {invoice.client.email && (
+                    <>
+                      {invoice.client.email}
+                      <br />
+                    </>
+                  )}
                   {invoice.client.phone && (
                     <>
                       <br />

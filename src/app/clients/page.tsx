@@ -12,7 +12,7 @@ import { formatCurrency } from "@/lib/utils"
 type Client = {
   id: string
   name: string
-  email: string
+  email: string | null
   phone: string
   city: string
   state: string
@@ -45,7 +45,7 @@ export default function ClientsPage() {
   const filtered = clients.filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchTerm.toLowerCase())
+      (c.email ?? "").toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleDelete = async (clientId: string) => {
@@ -126,7 +126,7 @@ export default function ClientsPage() {
                         {client.name}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-(--fg-muted) text-[12px]">{client.email}</TableCell>
+                    <TableCell className="text-(--fg-muted) text-[12px]">{client.email ?? "—"}</TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">{client.phone}</TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">
                       {[client.city, client.state].filter(Boolean).join(", ")}

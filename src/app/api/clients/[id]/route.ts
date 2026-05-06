@@ -98,7 +98,7 @@ export async function PUT(
       where: { id },
       data: {
         name,
-        email,
+        email: email ? email : null,
         phone,
         address,
         city,

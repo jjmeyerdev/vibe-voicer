@@ -15,6 +15,7 @@ import { ArrowLeft, Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { formatCurrency } from "@/lib/utils"
+import { PAYMENT_TERM_OPTIONS, dueDateFromTerm } from "@/lib/payment-terms"
 
 const invoiceItemSchema = z.object({
   id: z.string().optional(),
@@ -82,6 +83,14 @@ export default function EditInvoicePage() {
   const watchedTaxRate = useWatch({ control: form.control, name: "taxRate" })
   const watchedDiscountType = useWatch({ control: form.control, name: "discountType" })
   const watchedDiscountValue = useWatch({ control: form.control, name: "discountValue" })
+  const watchedPaymentTerms = useWatch({ control: form.control, name: "paymentTerms" })
+  const watchedIssueDate = useWatch({ control: form.control, name: "issueDate" })
+
+  useEffect(() => {
+    if (!watchedPaymentTerms || !watchedIssueDate) return
+    const next = dueDateFromTerm(watchedIssueDate, watchedPaymentTerms)
+    if (next) form.setValue("dueDate", next, { shouldDirty: true, shouldValidate: false })
+  }, [watchedPaymentTerms, watchedIssueDate, form])
 
   const items = watchedItems ?? []
   const subtotal = items.reduce(
@@ -278,9 +287,20 @@ export default function EditInvoicePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Payment terms</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Net 30" {...field} />
-                      </FormControl>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pick payment terms" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {PAYMENT_TERM_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

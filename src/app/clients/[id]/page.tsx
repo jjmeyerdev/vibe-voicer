@@ -13,7 +13,7 @@ import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
 type Client = {
   id: string
   name: string
-  email: string
+  email: string | null
   phone: string
   address: string
   city: string

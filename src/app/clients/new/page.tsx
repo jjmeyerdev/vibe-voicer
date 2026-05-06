@@ -15,7 +15,7 @@ import Link from "next/link"
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  email: z.union([z.literal(""), z.string().email("Invalid email address")]).optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -48,7 +48,7 @@ export default function NewClientPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, email: data.email?.trim() ? data.email.trim() : null }),
       })
       if (!response.ok) {
         const errorData = (await response.json().catch(() => ({}))) as { error?: string }
@@ -94,7 +94,7 @@ export default function NewClientPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email *</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="billing@liuandsons.com" {...field} />
                       </FormControl>
