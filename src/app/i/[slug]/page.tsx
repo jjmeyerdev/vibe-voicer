@@ -233,8 +233,33 @@ export default function PublicInvoicePage() {
         {/* Pay CTA */}
         {invoice.status !== "PAID" && (
           <div className="mt-8 mb-2 flex flex-col items-center gap-2">
-            <Button size="lg">Pay {formatCurrency(invoice.total)} →</Button>
-            <div className="text-[12px] text-(--fg-muted)">Pay with card, ACH, or notify of payment by check.</div>
+            {invoice.company?.email ? (
+              <Button asChild size="lg">
+                <a
+                  href={
+                    `mailto:${invoice.company.email}` +
+                    `?subject=${encodeURIComponent(`Payment for invoice ${invoice.invoiceNumber}`)}` +
+                    `&body=${encodeURIComponent(
+                      `Hi ${invoice.company.name ?? ""},\n\n` +
+                        `I'm writing about invoice ${invoice.invoiceNumber} for ${formatCurrency(invoice.total)}. ` +
+                        `Let me know how you'd like to receive payment.\n\n` +
+                        `Invoice link: ${typeof window !== "undefined" ? window.location.href : ""}\n`,
+                    )}`
+                  }
+                >
+                  Pay {formatCurrency(invoice.total)} →
+                </a>
+              </Button>
+            ) : (
+              <Button size="lg" disabled title="The sender hasn't added a contact email">
+                Pay {formatCurrency(invoice.total)} →
+              </Button>
+            )}
+            <div className="text-[12px] text-(--fg-muted)">
+              {invoice.company?.email
+                ? "Opens an email to the sender to arrange payment."
+                : "The sender hasn't added a contact email yet."}
+            </div>
           </div>
         )}
 
