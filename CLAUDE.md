@@ -13,8 +13,11 @@ Package manager is **pnpm** (lockfile is `pnpm-lock.yaml`).
 - `pnpm db:migrate` — create + apply a dev migration
 - `pnpm db:seed` — runs `tsx prisma/seed.ts`
 - `pnpm db:studio` — Prisma Studio
+- `pnpm test:e2e` — Playwright E2E tests (auto-boots `pnpm dev`)
+- `pnpm test:e2e:ui` — Playwright UI mode
+- `pnpm test:e2e:codegen` — record a flow against `http://localhost:3000`
 
-There is no test runner configured. Don't claim "tests pass" — there are none.
+The only tests are Playwright E2E specs under `tests/e2e/`. There are no unit tests — don't claim unit-test coverage.
 
 ## Architecture
 
