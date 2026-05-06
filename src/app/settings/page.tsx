@@ -66,11 +66,14 @@ export default function SettingsPage() {
         credentials: "include",
         body: JSON.stringify(personal),
       })
-      if (!response.ok) throw new Error("save failed")
+      if (!response.ok) {
+        const data = (await response.json().catch(() => ({}))) as { error?: string }
+        throw new Error(data.error ?? "Couldn’t save it.")
+      }
       toast.success("Personal info saved.")
     } catch (error) {
-      console.error("Personal save error:", error)
-      toast.error("Couldn’t save it.")
+      const message = error instanceof Error ? error.message : "Couldn’t save it."
+      toast.error(message)
     } finally {
       setIsSavingPersonal(false)
     }

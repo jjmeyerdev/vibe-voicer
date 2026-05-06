@@ -54,12 +54,26 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { fullName, email, phone, address, city, state, zipCode, country } = body
 
+    const trimmedName = typeof fullName === "string" ? fullName.trim() : ""
+    if (!trimmedName) {
+      return NextResponse.json({ error: "Name can’t be empty." }, { status: 400 })
+    }
+
+    const trimmedEmail = typeof email === "string" ? email.trim() : ""
+    if (!trimmedEmail) {
+      return NextResponse.json({ error: "Email can’t be empty." }, { status: 400 })
+    }
+    // Lightweight email shape check — auth providers will enforce more strictly.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      return NextResponse.json({ error: "That doesn’t look like a valid email." }, { status: 400 })
+    }
+
     // Update user basic info
     await db.user.update({
       where: { id: session.user.id },
       data: {
-        name: fullName || "",
-        email: email || "",
+        name: trimmedName,
+        email: trimmedEmail,
       }
     })
 
