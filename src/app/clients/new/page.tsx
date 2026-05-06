@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { signOut } from "@/lib/auth-client"
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -51,7 +52,13 @@ export default function NewClientPage() {
         body: JSON.stringify({ ...data, email: data.email?.trim() ? data.email.trim() : null }),
       })
       if (!response.ok) {
-        const errorData = (await response.json().catch(() => ({}))) as { error?: string }
+        const errorData = (await response.json().catch(() => ({}))) as { error?: string; code?: string }
+        if (errorData.code === "STALE_SESSION") {
+          toast.error(errorData.error ?? "Your session is stale. Signing you out…")
+          await signOut().catch(() => {})
+          router.push("/login")
+          return
+        }
         throw new Error(errorData.error ?? "Couldn’t create the client.")
       }
       toast.success("Client added.")
