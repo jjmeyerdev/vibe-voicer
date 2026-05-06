@@ -17,8 +17,6 @@ type InvoiceSettings = {
   nextInvoiceNumber: number
   paymentTerms: string
 }
-type AccountSettings = { currentPassword: string; newPassword: string; confirmPassword: string }
-
 export default function SettingsPage() {
   const [personal, setPersonal] = useState<PersonalSettings>({ fullName: "", email: "" })
   const [invoice, setInvoice] = useState<InvoiceSettings>({
@@ -28,14 +26,8 @@ export default function SettingsPage() {
     nextInvoiceNumber: 1,
     paymentTerms: "",
   })
-  const [account, setAccount] = useState<AccountSettings>({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  })
   const [isSavingPersonal, setIsSavingPersonal] = useState(false)
   const [isSavingInvoice, setIsSavingInvoice] = useState(false)
-  const [isSavingAccount, setIsSavingAccount] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -103,41 +95,6 @@ export default function SettingsPage() {
     }
   }
 
-  const handleChangePassword = async () => {
-    try {
-      setIsSavingAccount(true)
-      if (account.newPassword !== account.confirmPassword) {
-        toast.error("The two new passwords don’t match.")
-        return
-      }
-      if (account.newPassword.length < 8) {
-        toast.error("Eight characters minimum.")
-        return
-      }
-      const response = await fetch("/api/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          currentPassword: account.currentPassword,
-          newPassword: account.newPassword,
-          revokeOtherSessions: true,
-        }),
-      })
-      if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { error?: string }
-        throw new Error(data.error ?? "Couldn’t change the password.")
-      }
-      toast.success("Password updated.")
-      setAccount({ currentPassword: "", newPassword: "", confirmPassword: "" })
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Couldn’t change the password."
-      toast.error(message)
-    } finally {
-      setIsSavingAccount(false)
-    }
-  }
-
   return (
     <ProtectedLayout>
       <div className="max-w-230">
@@ -145,7 +102,6 @@ export default function SettingsPage() {
           <TabsList>
             <TabsTrigger value="personal">Personal</TabsTrigger>
             <TabsTrigger value="invoice">Invoice defaults</TabsTrigger>
-            <TabsTrigger value="account">Account</TabsTrigger>
           </TabsList>
 
           <TabsContent value="personal" className="mt-2">
@@ -256,57 +212,6 @@ export default function SettingsPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="account" className="mt-2">
-            <div className="bg-background border border-border rounded-[12px] p-7">
-              <div className="t-overline">Change password</div>
-              <p className="text-[12px] text-(--fg-muted) mt-0.5 mb-6">
-                We&rsquo;ll sign you out of other sessions when you change it.
-              </p>
-              <div className="flex flex-col gap-4 max-w-105">
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="currentPassword">Current password</Label>
-                  <Input
-                    id="currentPassword"
-                    type="password"
-                    value={account.currentPassword}
-                    onChange={(e) =>
-                      setAccount((s) => ({ ...s, currentPassword: e.target.value }))
-                    }
-                    autoComplete="current-password"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="newPassword">New password</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={account.newPassword}
-                    onChange={(e) => setAccount((s) => ({ ...s, newPassword: e.target.value }))}
-                    minLength={8}
-                    autoComplete="new-password"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="confirmPassword">Confirm new password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={account.confirmPassword}
-                    onChange={(e) =>
-                      setAccount((s) => ({ ...s, confirmPassword: e.target.value }))
-                    }
-                    minLength={8}
-                    autoComplete="new-password"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end pt-6 mt-4 border-t border-border">
-                <Button onClick={handleChangePassword} disabled={isSavingAccount}>
-                  {isSavingAccount ? "Updating…" : "Change password"}
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </ProtectedLayout>
