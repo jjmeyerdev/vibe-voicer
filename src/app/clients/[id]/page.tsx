@@ -3,7 +3,7 @@
 import { ProtectedLayout } from "@/components/protected-layout"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, ArrowLeft } from "lucide-react"
+import { Plus, ArrowLeft, Edit } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
@@ -103,12 +103,20 @@ export default function ClientDetailPage() {
               Back to clients
             </Link>
           </Button>
-          <Button asChild>
-            <Link href="/invoices/new">
-              <Plus className="h-4 w-4" />
-              New invoice
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="secondary">
+              <Link href={`/clients/${clientId}/edit`}>
+                <Edit className="h-3.5 w-3.5" />
+                Edit
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/invoices/new">
+                <Plus className="h-4 w-4" />
+                New invoice
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-3.5">

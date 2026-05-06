@@ -136,7 +136,7 @@ export default function ClientsPage() {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button asChild variant="ghost" size="icon" title="Edit">
-                          <Link href={`/clients/${client.id}`}>
+                          <Link href={`/clients/${client.id}/edit`}>
                             <Edit className="h-3.5 w-3.5" />
                           </Link>
                         </Button>
