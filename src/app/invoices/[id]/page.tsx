@@ -8,6 +8,7 @@ import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { formatCurrency, formatQuantity } from "@/lib/utils"
+import { formatInvoiceDate } from "@/lib/date"
 import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
 
 type Invoice = {
@@ -57,7 +58,7 @@ function buildTimeline(invoice: Invoice): TimelineStep[] {
   }
   const sent: TimelineStep = {
     label: "Sent to client",
-    time: invoice.status === "DRAFT" ? "—" : new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" }),
+    time: invoice.status === "DRAFT" ? "—" : formatInvoiceDate(invoice.issueDate, { dateStyle: "medium" }),
     state: "sent",
     pending: invoice.status === "DRAFT",
   }
@@ -227,9 +228,9 @@ export default function InvoiceDetailPage() {
                 <div className="t-overline">Invoice</div>
                 <div className="font-mono tabular-nums text-[24px] mt-1.5">{invoice.invoiceNumber}</div>
                 <div className="text-[12px] text-(--fg-muted) mt-0.5 leading-[1.5]">
-                  Issued {new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                  Issued {formatInvoiceDate(invoice.issueDate, { dateStyle: "medium" })}
                   <br />
-                  Due {new Date(invoice.dueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                  Due {formatInvoiceDate(invoice.dueDate, { dateStyle: "medium" })}
                 </div>
               </div>
               <div>

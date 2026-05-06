@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { formatCurrency } from "@/lib/utils"
+import { formatInvoiceDate } from "@/lib/date"
 import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
 
 type Client = {
@@ -174,10 +175,10 @@ export default function ClientDetailPage() {
                       </Link>
                     </TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">
-                      {new Date(invoice.issueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                      {formatInvoiceDate(invoice.issueDate, { dateStyle: "medium" })}
                     </TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">
-                      {new Date(invoice.dueDate).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                      {formatInvoiceDate(invoice.dueDate, { dateStyle: "medium" })}
                     </TableCell>
                     <TableCell data-num="true">{formatCurrency(Number(invoice.total))}</TableCell>
                     <TableCell>

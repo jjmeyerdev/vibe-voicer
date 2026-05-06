@@ -15,6 +15,7 @@ import { ArrowLeft, Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { formatCurrency } from "@/lib/utils"
+import { toInvoiceDateInputValue } from "@/lib/date"
 import { PAYMENT_TERM_OPTIONS, dueDateFromTerm } from "@/lib/payment-terms"
 
 const invoiceItemSchema = z.object({
@@ -121,8 +122,8 @@ export default function EditInvoicePage() {
         setClients(clientsData)
         form.reset({
           clientId: data.client.id,
-          issueDate: new Date(data.issueDate).toLocaleDateString("en-CA"),
-          dueDate: data.dueDate ? new Date(data.dueDate).toLocaleDateString("en-CA") : "",
+          issueDate: toInvoiceDateInputValue(data.issueDate),
+          dueDate: data.dueDate ? toInvoiceDateInputValue(data.dueDate) : "",
           discountType: data.discountType ?? "PERCENTAGE",
           discountValue: Number(data.discountValue) || 0,
           taxRate: Number(data.taxRate) || 0,

@@ -1,11 +1,12 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer"
 import { processPaymentTerms } from "@/lib/payment-terms"
+import { formatInvoiceDate } from "@/lib/date"
 
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
-    padding: 15,
+    padding: 12,
     fontFamily: "Helvetica",
     color: "#000000",
     lineHeight: 1.2,
@@ -223,13 +224,13 @@ const styles = StyleSheet.create({
     border: "2px solid #000000",
   },
   thankYou: {
-    marginTop: 25,
+    marginTop: 10,
     textAlign: "center",
     fontSize: 12,
     color: "#000000",
     fontStyle: "italic",
     backgroundColor: "#f9f9f9",
-    padding: 15,
+    padding: 10,
     borderRadius: 6,
     border: "2px solid #000000",
   },
@@ -316,14 +317,8 @@ export function BlackWhiteInvoicePDF({ invoice }: BlackWhiteInvoicePDFProps) {
     }).format(amount)
   }
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
-
+  const formatDate = (date: string) =>
+    formatInvoiceDate(date, { year: "numeric", month: "long", day: "numeric" })
 
   return (
     <Document>
@@ -380,13 +375,13 @@ export function BlackWhiteInvoicePDF({ invoice }: BlackWhiteInvoicePDFProps) {
           {invoice.issueDate && (
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>Issue Date</Text>
-              <Text style={styles.statValue}>{new Date(invoice.issueDate).toLocaleDateString()}</Text>
+              <Text style={styles.statValue}>{formatInvoiceDate(invoice.issueDate)}</Text>
             </View>
           )}
           {invoice.dueDate && (
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>Due Date</Text>
-              <Text style={styles.statValue}>{new Date(invoice.dueDate).toLocaleDateString()}</Text>
+              <Text style={styles.statValue}>{formatInvoiceDate(invoice.dueDate)}</Text>
             </View>
           )}
           {invoice.total && (
@@ -540,13 +535,6 @@ export function BlackWhiteInvoicePDF({ invoice }: BlackWhiteInvoicePDFProps) {
         {/* Thank You Message */}
         <View style={styles.thankYou}>
           <Text>Thank you for your business!</Text>
-        </View>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <View style={styles.pageNumber}>
-            <Text>Page 1 of 1</Text>
-          </View>
         </View>
       </Page>
     </Document>

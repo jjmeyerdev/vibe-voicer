@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { Prisma, type DiscountType, type InvoiceStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { parseInvoiceDate } from "@/lib/date"
 
 type IncomingItem = {
   description?: unknown
@@ -167,8 +168,8 @@ export async function POST(request: NextRequest) {
           invoiceNumber,
           publicSlug: randomUUID(),
           status: status ?? "DRAFT",
-          issueDate: new Date(issueDate),
-          dueDate: dueDate ? new Date(dueDate) : new Date(issueDate),
+          issueDate: parseInvoiceDate(issueDate),
+          dueDate: dueDate ? parseInvoiceDate(dueDate) : parseInvoiceDate(issueDate),
           subtotal,
           discountType: discountTypeFinal,
           discountValue: discountValueNum,

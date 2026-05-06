@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { formatCurrency, formatQuantity } from "@/lib/utils"
+import { formatInvoiceDate } from "@/lib/date"
 import { Wordmark } from "@/components/brand/wordmark"
 import { ThemeSelector } from "@/components/theme-selector"
 import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
@@ -45,10 +46,6 @@ type Invoice = {
   taxAmount: number
   total: number
   notes?: string
-}
-
-function formatDate(input: string): string {
-  return new Date(input).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
 }
 
 function formatAddressLines(addr: Address): string[] {
@@ -136,7 +133,7 @@ export default function PublicInvoicePage() {
               <span className="font-mono text-[40px] tracking-[0]">{invoice.invoiceNumber}</span>
             </h1>
             <div className="text-[12px] text-(--fg-muted) mt-1.5">
-              Issued {formatDate(invoice.issueDate)} · Due {formatDate(invoice.dueDate)}
+              Issued {formatInvoiceDate(invoice.issueDate)} · Due {formatInvoiceDate(invoice.dueDate)}
             </div>
           </div>
           <StatusBadge status={invoice.status} />

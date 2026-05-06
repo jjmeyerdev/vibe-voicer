@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { formatCurrency, cn } from "@/lib/utils"
+import { formatInvoiceDate } from "@/lib/date"
 import { StatusBadge, type InvoiceStatus } from "@/components/status-badge"
 
 type Invoice = {
@@ -205,10 +206,10 @@ export default function InvoicesPage() {
                     </TableCell>
                     <TableCell className="font-medium">{invoice.client.name}</TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">
-                      {new Date(invoice.issueDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                      {formatInvoiceDate(invoice.issueDate)}
                     </TableCell>
                     <TableCell className="text-(--fg-muted) text-[12px]">
-                      {new Date(invoice.dueDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                      {formatInvoiceDate(invoice.dueDate)}
                     </TableCell>
                     <TableCell data-num="true">{formatCurrency(Number(invoice.total))}</TableCell>
                     <TableCell>

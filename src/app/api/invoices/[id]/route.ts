@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import type { DiscountType, InvoiceStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { parseInvoiceDate } from "@/lib/date"
 
 type IncomingItem = {
   description?: unknown
@@ -215,8 +216,8 @@ export async function PUT(
         data: {
           ...(clientId ? { clientId } : {}),
           ...(status ? { status } : {}),
-          ...(issueDate ? { issueDate: new Date(issueDate) } : {}),
-          ...(dueDate ? { dueDate: new Date(dueDate) } : {}),
+          ...(issueDate ? { issueDate: parseInvoiceDate(issueDate) } : {}),
+          ...(dueDate ? { dueDate: parseInvoiceDate(dueDate) } : {}),
           ...(discountTypeFinal ? { discountType: discountTypeFinal } : {}),
           ...(discountValueNum !== undefined
             ? { discountValue: discountValueNum }
